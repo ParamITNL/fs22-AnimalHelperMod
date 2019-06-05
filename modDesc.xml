@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<modDesc descVersion="40">
+    <author>ParamIT</author>
+    <version>1.0.0.0</version>
+    <title>
+        <en>Happy Animals</en>
+    </title>
+    <description>
+        <en><![CDATA[Easily make your animals happy by filling up all their needs (Food, water, straw, etc)]]></en>
+    </description>
+    <iconFilename>happyAnimals.dds</iconFilename>
+    <multiplayer supported="false"/>
+    <extraSourceFiles>
+        <sourceFile filename="happyAnimals.lua" />
+    </extraSourceFiles>
+    <inputBinding>
+        <!-- <actionBinding action="A_HUD_CHICKEN">
+			<binding device="KB_MOUSE_DEFAULT" input="KEY_Alt KEY_j"/>
+		</actionBinding>
+		<actionBinding action="A_HUD_COWS">
+			<binding device="KB_MOUSE_DEFAULT" input="KEY_Alt KEY_k" />
+		</actionBinding>
+    <actionBinding action="A_HUD_PIGS">
+			<binding device="KB_MOUSE_DEFAULT" input="KEY_Alt KEY_u" />
+		</actionBinding>
+    <actionBinding action="A_HUD_HORSES">
+			<binding device="KB_MOUSE_DEFAULT" input="KEY_Alt KEY_i" />
+		</actionBinding>
+    <actionBinding action="A_HUD_SHEEPS">
+			<binding device="KB_MOUSE_DEFAULT" input="KEY_Alt KEY_o" />
+		</actionBinding>
+    <actionBinding action="A_HUD_FONT_INCREASE">
+			<binding device="KB_MOUSE_DEFAULT" input="KEY_Alt KEY_9" />
+		</actionBinding>
+    <actionBinding action="A_HUD_FONT_DECREASE">
+			<binding device="KB_MOUSE_DEFAULT" input="KEY_Alt KEY_0" />
+		</actionBinding>
+		<actionBinding action="A_HUD_COMBI_FILL_LEVEL">
+			<binding device="KB_MOUSE_DEFAULT" input="KEY_Alt KEY_ö" />
+		</actionBinding>
+    <actionBinding action="A_HUD_SHOW_HIDE_ALL">
+			<binding device="KB_MOUSE_DEFAULT" input="KEY_Alt KEY_ä" />
+		</actionBinding> -->
+    </inputBinding>
+    <actions>
+        <!-- <action name="A_HUD_CHICKEN"/>
+		<action name="A_HUD_COWS"/>
+    <action name="A_HUD_PIGS"/>
+    <action name="A_HUD_HORSES"/>
+    <action name="A_HUD_SHEEPS"/>
+    <action name="A_HUD_FONT_INCREASE"/>
+    <action name="A_HUD_FONT_DECREASE"/>
+    <action name="A_HUD_COMBI_FILL_LEVEL"/>
+    <action name="A_HUD_SHOW_HIDE_ALL"/> -->
+    </actions>
+</modDesc>

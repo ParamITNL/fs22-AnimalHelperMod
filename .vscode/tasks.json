@@ -1,0 +1,17 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Create Mod Zip",
+            "type": "shell",
+            "command": "./buildScripts/build.ps1",
+            "windows": {
+                "command": ".\\buildScripts\\build.ps1"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}

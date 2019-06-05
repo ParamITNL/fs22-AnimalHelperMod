@@ -1,0 +1,1 @@
+Compress-Archive -Path *.lua, *.xml, *.dds -Force -CompressionLevel Optimal -DestinationPath "C:\Users\peter\Documents\My Games\FarmingSimulator2019\mods\HappyAnimals.zip"
