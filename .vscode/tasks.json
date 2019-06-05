@@ -8,6 +8,12 @@
             "windows": {
                 "command": ".\\buildScripts\\build.ps1"
             },
+            "group": "build"
+        },
+        {
+            "label": "Copy Mod to gamefolder",
+            "type": "shell",
+            "command": "./buildScripts/build.ps1 --no-zip",
             "group": {
                 "kind": "build",
                 "isDefault": true
