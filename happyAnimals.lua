@@ -97,24 +97,24 @@ function HappyAnimals:FillFoodLevels(husbandry)
     end;
 end;
 
-function HappyAnimals:FillFoodLevelsHorse(husbandry, foodModule)
-    --[[
-        Haver = 4
-        Hooi  = 30
-    ]]
-    local freeCapacityHay = foodModule:getFreeCapacity(30);
-    local freeCapacityOat = foodModule:getFreeCapacity(4);
+function HappyAnimals:ChangeFillLevel(foodModule, fillTypeIndexes)
+	for _, fillTypeIndex in pairs(fillTypeIndexes) do
+		local freeCapacity = foodModule:getFreeCapacity(fillTypeIndex);
+		foodModule.ChangeFillLevels(freeCapacity, fillTypeIndex);
+	end;
+end;
 
-    print ("Filling levels..");
-    foodModule:changeFillLevels(freeCapacityHay, 30);
-    foodModule:changeFillLevels(freeCapacityOat, 4);
+function HappyAnimals:FillFoodLevelsHorse(husbandry, foodModule)
+	HappyAnimals:ChangeFillLevel(foodModule, {4, 30})
 end;
 
 function HappyAnimals:FillFoodLevelsSheep(husbandry, foodModule)
-    --[[
+	-- TODO: Check if this array thingy works...
+	    --[[
         Gras = 28
         Hooi = 30
     --]]
+	HappyAnimals:ChangeFillLevel(foodModule, {28, 30} );
 end;
 
 function HappyAnimals:FillFoodLevelsPigs(husbandry, foodModule)
@@ -125,15 +125,11 @@ function HappyAnimals:FillFoodLevelsPigs(husbandry, foodModule)
         Sojabonen, Koolzaad, Zonnebloemen = 7/5?/6
         Aardappels/Suikerbieten = 9/10
     --]]
+	HappyAnimals:ChangeFillLevel(foodModule, {8, 2, 3, 7, 5, 6, 9, 10});
 end;
 
 function HappyAnimals:FillFoodLevelsChicken(husbandry, foodModule)
-    local freeCapacityWheet = foodModule:getFreeCapacity(2);
-    local freeCapacityGerst = foodModule:getFreeCapacity(3);
-
-    print ("Filling levels..");
-    foodModule:changeFillLevels(freeCapacityWheet, 2);
-    foodModule:changeFillLevels(freeCapacityGerst, 3);
+    HappyAnimals:ChangeFillLevel(foodModule, {2, 3} );
 end;
 
 function HappyAnimals:FillFoodLevelsCows(husbandry, foodModule)
