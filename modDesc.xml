@@ -6,7 +6,7 @@
         <en>Happy Animals</en>
     </title>
     <description>
-        <en><![CDATA[Easily make your animals happy by filling up all their needs (Food, water, straw, etc)]]></en>
+        <en><![CDATA[Easily make your animals happy by filling up all their needs (Food, water, straw)]]></en>
     </description>
     <iconFilename>happyAnimals.dds</iconFilename>
     <multiplayer supported="false"/>

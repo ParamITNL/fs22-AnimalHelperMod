@@ -3,61 +3,21 @@
 -- Version 1.0.0.0
 
 HappyAnimals = {};
-HappyAnimals.Counter = 0;
-
--- ID 28 = GRAS
--- ID 24 = SILAGE 
--- ID 30 = HEU
--- ID 19 = MISCHRATION
--- ID 18 = WASSER
--- ID 31 = STROH
--- ID 2 = WEIZEN
--- ID 8 = MAIS
--- ID 6 = SONNENBLUMEN
--- ID 9 = KARTOFFEL
--- ID 4 = HAFER
--- ID 10 = ZUCKERRÜBEN
--- ID 3 = GERSTE
--- ID 7 = SOYABOHNEN
--- ID 5 = RAPS
--- ID 14 Pallets Chicken Eggs goes in game to 1?!
--- ID 15 Pallets Sheep wool goes in game to 1 !?!
--- ID 16 milk Cows
--- ID 45 manure (mist) Cows, pigs
--- ID 46 liquid manure (gülle) Cows, pigs
 
 function HappyAnimals:loadMap(name)
-    print("loadMap");
 end;
 
 function HappyAnimals:keyEvent(unicode, sym, modifier, isDown)
-    -- if bitAND(modifier, Input.MOD_CTRL) > 0 and bitAND(modifier, Input.MOD_ALT) > 0 and Input.isKeyPressed(Input.KEY_6) then
-    --     local p = getUserProfileAppPath() .. "mods/happyAnimals/happyAnimals.lua";
-    --     print ("Trying to reload source file from " .. p)
-    --     package.loaded[p] = nil;
-    --     require(p);
-    -- end
-
     if bitAND(modifier, Input.MOD_CTRL) > 0 and bitAND(modifier, Input.MOD_ALT) > 0 and Input.isKeyPressed(Input.KEY_7) then
         print ("We're going to make animals happy!");
         HappyAnimals:makeAnimalsHappy();
     end;
-    
-    if bitAND(modifier, Input.MOD_CTRL) > 0 and bitAND(modifier, Input.MOD_ALT) > 0 and Input.isKeyPressed(Input.KEY_0) then 
-		if (g_currentMission.missionDynamicInfo.isMultiplayer == true) and (g_currentMission.player.farmId == FarmManager.SPECTATOR_FARM_ID) then
-			print("MoneyTool - Multiplayer game - Player has no Farm!");
-		else
-			g_currentMission:consoleCommandCheatMoney(money);
-		end;
-	end;
 end;
 
 function HappyAnimals:update(dt)
 end;
 
 function HappyAnimals:draw()
-    -- this one get's called.. Update isn't. Don't know why...HappyAnimals
-    -- print("draw");
 end;
 
 function HappyAnimals:deleteMap()
@@ -67,18 +27,12 @@ function HappyAnimals:mouseEvent(posX, posY, isDown, isUp, button)
 end;
 
 function HappyAnimals:makeAnimalsHappy()
-
     for k,husbandry in pairs(g_currentMission.husbandries) do
         HappyAnimals:CleanHusbandry(husbandry);
         HappyAnimals:FillFoodLevels(husbandry);
         HappyAnimals:FillWaterLevels(husbandry);
         HappyAnimals:FillStrawLevels(husbandry);
     end;
-end;
-
-function HappyAnimals:FillStrawLevels(husbandry)
-    print("Filling up Straw for husbandry " .. husbandry:getAnimalType())
-    --31
 end;
 
 function HappyAnimals:FillFoodLevels(husbandry)
@@ -129,6 +83,10 @@ function HappyAnimals:FillFoodLevelsPigs(husbandry, foodModule)
 end;
 
 function HappyAnimals:FillFoodLevelsChicken(husbandry, foodModule)
+    --[[
+        Tarwe    2
+        Gerst    3
+    --]]
     HappyAnimals:ChangeFillLevel(foodModule, {2, 3} );
 end;
 
@@ -138,15 +96,29 @@ function HappyAnimals:FillFoodLevelsCows(husbandry, foodModule)
       Hooi / Kuilvoer,=30/24
       Gras  =28
     --]]
+    HappyAnimals:ChangeFillLevel(foodModule, { 19, 30, 24, 28} );
 end;
 
 function HappyAnimals:FillWaterLevels(husbandry)
     --18
+    local waterModule = husbandry:getModuleByName("water");
+    if waterModule ~= nil then
+        -- TODO: Check if ChangeFillLevel functions for WaterModule too
+        HappyAnimals:ChangeFillLevel(waterModule, { 18 });
+    end
+end;
+
+function HappyAnimals:FillStrawLevels(husbandry)
+    --[[
+        Straw = 31
+    -- ]]
+    local strawModule = husbandry:getModuleByName("straw");
+    if strawModule ~= nil then
+        HappyAnimals:ChangeFillLevel(strawModule, 31)
+    end;
 end;
 
 function HappyAnimals:CleanHusbandry(husbandry)
-    print ("Cleaning husbandry " .. husbandry:getAnimalType());
-
     if husbandry.modulesByName.foodSpillage ~= nil then
         -- Sets cleanliness to 100%
         husbandry.modulesByName.foodSpillage.cleanlinessFactor = 1.0;
