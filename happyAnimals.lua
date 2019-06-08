@@ -52,9 +52,23 @@ function HappyAnimals:FillFoodLevels(husbandry)
 end;
 
 function HappyAnimals:ChangeFillLevel(foodModule, fillTypeIndexes)
-	for _, fillTypeIndex in pairs(fillTypeIndexes) do
-		local freeCapacity = foodModule:getFreeCapacity(fillTypeIndex);
-		foodModule.ChangeFillLevels(freeCapacity, fillTypeIndex);
+	for _,fillTypeIndex in pairs(fillTypeIndexes) do
+        local freeCapacity = foodModule:getFreeCapacity(fillTypeIndex);
+        print("FilltypeIndex:" .. fillTypeIndex .. ", freecapacity:" .. freeCapacity)
+
+        local delta = 0.0
+        if foodModule.fillLevels[fillTypeIndex] ~= nil then
+            local oldFillLevel = foodModule.fillLevels[fillTypeIndex]
+            local newFillLevel = oldFillLevel + freeCapacity
+
+
+            newFillLevel = math.max(newFillLevel, 0.0)
+            delta = newFillLevel - oldFillLevel
+            foodModule:setFillLevel(fillTypeIndex, newFillLevel)
+        end
+        -- return delta
+
+		-- foodModule.changeFillLevels(freeCapacity, fillTypeIndex);
 	end;
 end;
 
@@ -114,7 +128,7 @@ function HappyAnimals:FillStrawLevels(husbandry)
     -- ]]
     local strawModule = husbandry:getModuleByName("straw");
     if strawModule ~= nil then
-        HappyAnimals:ChangeFillLevel(strawModule, 31)
+        HappyAnimals:ChangeFillLevel(strawModule, {31} )
     end;
 end;
 
