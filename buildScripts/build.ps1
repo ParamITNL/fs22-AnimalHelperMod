@@ -1,12 +1,14 @@
 param (
-  [string]$nozip = $false
+  [Boolean]$nozip = $false
 )
+
+Write-Output "Create folder instead of zip: $($nozip)"
 
 $destination = "C:\Users\peter\Documents\My Games\FarmingSimulator2019\mods\"
 $destinationFolder = "$($destination)happyAnimals\"
 $destinationZip = "$($destination)happyAnimals.zip"
 
-if ($nozip) {
+if ($nozip -eq $true) {
   Write-Output "Copying folder"
   if(![System.IO.File]::Exists($destinationFolder)){
     Write-Output "Creating target directory"
