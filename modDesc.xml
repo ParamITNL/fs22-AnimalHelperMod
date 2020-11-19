@@ -1,17 +1,43 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="40">
     <author>ParamIT</author>
-    <version>1.0.0.0</version>
+    <version>1.1.0.0</version>
     <title>
-        <en>Happy Animals</en>
+        <en>Animal Helper</en>
+        <nl>Dieren verzorger</nl>
     </title>
     <description>
-        <en><![CDATA[Easily make your animals happy by filling up all their needs (Food, water, straw)]]></en>
+        <en><![CDATA[Easily make your animals happy by filling up all their needs (Food, water, straw)
+Pending features:
+- Train horses
+- Fill Foodgroups with the different FillTypes
+- User should pay for resources used (food, straw, etc);
+- Using seasons repricing for calculating these costs
+
+Changelog:
+- v1.1.0.0
+-- Reworked scripts to work with MaizePlus mods.
+-- Script now loops through available foodGroups and fills them (still room for rework)
+        ]]></en>
+        <nl><![CDATA[Een verzorger die de verzorging van je dieren eenvoudig(er) maakt door in hun behoeftes (Voedsel, water, stro)
+te voorzien.
+
+Nog te bouwen functionaliteiten:
+- Trainen van paarden
+- FoodGroups vullen met de verschillende types voer, ipv de eerste die het script tegenkomt voor deze groep
+- Kosten in rekening brengen voor gebruikte materialen
+- Deze kosten baseren op season "repricing" mechanisme.
+
+Changelog:
+- v1.1.0.0
+-- Scripts opnieuw gebouwd tbv compatibiliteit met MaizePlus
+-- Script loopt nu door beschikbare FoodGroups en vult deze, ipv vastgestelde fillTypes.
+]]></nl>
     </description>
     <iconFilename>happyAnimals.dds</iconFilename>
     <multiplayer supported="false"/>
     <extraSourceFiles>
-        <sourceFile filename="happyAnimals.lua" />
+        <sourceFile filename="animalHelper.lua" />
     </extraSourceFiles>
     <inputBinding>
     </inputBinding>
