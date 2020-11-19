@@ -7,8 +7,8 @@ Mod fills foodTypes, water and straw for all AnimalTypes that come with FS19 (Co
 
 ## History:
 Please refer to modDesc.xml for a complete changelog. The following releases are available:
-xx-2018 v1.0 - Initial version
-11-2020 v1.1 - Scripts reworked to dynamically determine fillTypes to top up.
+* xx-2018 v1.0 - Initial version
+* 11-2020 v1.1 - Scripts reworked to dynamically determine fillTypes to top up.
 
 
 ## Untested:
