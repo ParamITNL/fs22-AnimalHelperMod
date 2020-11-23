@@ -14,7 +14,7 @@ animalHelper = {
         ["HORSE"] = function(husbandry) 
             animalHelper:printf("Horse Helper Activated");
             animalHelper:doForHusbandry(husbandry);
---            animalHelper:trainHorses(husbandry);
+            animalHelper:trainHorses(husbandry);
         end,
         ["FALLBACK"] = function(husbandry)
             animalHelper:printf("Starting FALLBACK helper. No specific helper for animal is configured");
@@ -23,9 +23,21 @@ animalHelper = {
     },
     enableLogging = false,
     modDir = g_currentModDirectory,
+    enabled = false,
     version = "",
     configXML = ""
 }
+
+function animalHelper:dayChanged()
+    if animalHelper.enabled == true then
+        for _,husbandry in pairs(g_currentMission.husbandries) do
+            animalHelper:printf("Training the horses...");
+            if (husbandry.ownerFarmId == 1 and husbandry.modulesByName.animals.animalType == "HORSE") then
+                animalHelper:trainHorses(husbandry);
+            end;
+        end;
+    end;
+end;
 
 
 function animalHelper:init() 
@@ -56,6 +68,7 @@ end;
 
 function animalHelper:loadMap(name)
     animalHelper:printf("loadMap: " ..name);
+    g_currentMission.environment:addDayChangeListener(animalHelper);
 end;
 
 function animalHelper:keyEvent(unicode, sym, modifier, isDown)
@@ -139,6 +152,18 @@ function animalHelper:getFillTypes(foodModule)
     end;
 
     return fillTypes;
+end;
+
+function animalHelper:trainHorses(husbandry) 
+    if husbandry.modulesByName.animals.animalType ~= "HORSE" then return;
+
+    -- loop through animals in Husbandry:
+    for _,animal in pairs(husbandry:getAnimals()) do
+        if animal.module.animalType == "HORSE" then
+            animal.ridingTimerSent = animal.DAILY_TARGET_RIDING_TIME;
+            animal.ridingTimer = animal.DAILY_TARGET_RIDING_TIME;
+        end;
+    end;
 end;
 
 function animalHelper:update(dt)
