@@ -1,7 +1,5 @@
 # fs19-HappyAnimalsMod
 
-[[_TOC-]]
-
 This mod allows you to easily fill up all levels for your animal husbandries. I created this mod, because I found it a lot of effort to initialy fill up the husbandries after purchasing the animals. Keeping them filled up thereafter is part of my game :-) Thats why its bound to keyInput instead of continuously filling op the husbandries.
 
 ## Usage
