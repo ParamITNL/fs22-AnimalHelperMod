@@ -9,12 +9,14 @@
     <description>
         <en><![CDATA[Easily make your animals happy by filling up all their needs (Food, water, straw)
 Pending features:
-- Train horses
 - Fill Foodgroups with the different FillTypes
 - User should pay for resources used (food, straw, etc);
 - Using seasons repricing for calculating these costs
 
 Changelog:
+- v1.1.1.0
+-- Training of horses has been added. Horses will be trained when a new day has started. Horses will only be trained if the helper
+   has been launched at least once in this game-session (will not be persisted in your save-game).
 - v1.1.0.0
 -- Reworked scripts to work with MaizePlus mods.
 -- Script now loops through available foodGroups and fills them (still room for rework)
@@ -23,12 +25,15 @@ Changelog:
 te voorzien.
 
 Nog te bouwen functionaliteiten:
-- Trainen van paarden
 - FoodGroups vullen met de verschillende types voer, ipv de eerste die het script tegenkomt voor deze groep
 - Kosten in rekening brengen voor gebruikte materialen
 - Deze kosten baseren op season "repricing" mechanisme.
 
 Changelog:
+- v1.1.1.0
+-- Het trainen van paarden is toegevoegd. Paarden worden getraind zodra een nieuwe dag begonnen is en als de helper tenminste een keer
+   eerder is gestart (in deze spel-sessie).
+
 - v1.1.0.0
 -- Scripts opnieuw gebouwd tbv compatibiliteit met MaizePlus
 -- Script loopt nu door beschikbare FoodGroups en vult deze, ipv vastgestelde fillTypes.
