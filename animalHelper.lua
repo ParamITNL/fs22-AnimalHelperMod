@@ -3,7 +3,6 @@
     Author:         ParamIT
     Version:        1.0
 ]]--
-
 if (animalHelper ~= nil) then
     print("Unregister mod events...");
     removeModEventListener(animalHelper);
@@ -15,10 +14,12 @@ animalHelper = {
             animalHelper:printf("Horse Helper Activated");
             animalHelper:doForHusbandry(husbandry);
             animalHelper:trainHorses(husbandry);
+            return 5000;
         end,
         ["FALLBACK"] = function(husbandry)
             animalHelper:printf("Starting FALLBACK helper. No specific helper for animal is configured");
             animalHelper:doForHusbandry(husbandry);
+            return 3000;
         end
     },
     enableLogging = false,
@@ -49,6 +50,7 @@ function animalHelper:init()
     animalHelper.configXML = loadXMLFile("animalHelperXMLFile", animalHelper.modDir .. "animalHelper.xml");
     animalHelper.enableLogging = Utils.getNoNil(getXMLBool(animalHelper.configXML, "animalHelper.logging#enabled"), true);
 
+    Player.registerActionEvents = Utils.appendedFunction(Player.registerActionEvents, animalHelper.registerActionEventsPlayer);
     print("Script: animalHelper v"..tostring(animalHelper.version).." by ParamIT");
 end;
 
@@ -73,17 +75,31 @@ end;
 
 function animalHelper:keyEvent(unicode, sym, modifier, isDown)
     if bitAND(modifier, Input.MOD_CTRL) > 0 and bitAND(modifier, Input.MOD_ALT) > 0 and Input.isKeyPressed(Input.KEY_9) then
-        animalHelper:startHelper();
+        -- animalHelper:startHelper();
     end;
+    if bitAND(modifier, Input.MOD_CTRL) > 0 and bitAND(modifier, Input.MOD_ALT) > 0 and Input.isKeyPressed(Input.KEY_8) then
+        g_currentMission:addMoney(1000000, owner, "animalUpkeep");
+    end;
+end;
 
-    if bitAND(modifier, Input.MOD_CTRL) > 0 and bitAND(modifier, Input.MOD_ALT) > 0 and Input.isKeyPressed(Input.KEY_0) then
-        animalHelper:printf("Money money money");
-        g_currentMission:addMoney(10000000, 1, MoneyType.OTHER, true, true);
+function animalHelper:registerActionEventsPlayer()
+    print ("Registering Actions!");
+    --g_inputBinding:setActionEventActive(g_easyDevControls.eventIdObjectDelete, self.lastFoundObject ~= nil)
+    local valid, actionEventId, _ = g_inputBinding:registerActionEvent(InputAction.ANIMAL_HELPER_HIRE_HELPER, self, animalHelper.actionCallbackPlayer, false, true, false, true);
+    animalHelper:printf("eventId" .. actionEventId );
+    g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_HIGH);
+    g_inputBinding:setActionEventActive(actionEventId, true);
+end;
+
+function animalHelper:actionCallbackPlayer(actionName, keyStatus, arg4, arg5, arg6)
+    if actionName == "ANIMAL_HELPER_HIRE_HELPER" then animalHelper:startHelper();
     end;
 end;
 
 function animalHelper:startHelper()
     animalHelper:printf("Animal Helper - Running Animal Helper");
+    local helperCosts = 0;
+    local farmId;
 
     for _,husbandry in pairs(g_currentMission.husbandries) do
         if (husbandry.ownerFarmId == 1) then
@@ -91,10 +107,12 @@ function animalHelper:startHelper()
             local helper = Utils.getNoNil(animalHelper.helpers[husbandry.modulesByName.animals.animalType],
                                           animalHelper.helpers.FALLBACK);
             if (helper ~= nil) then
-                helper(husbandry);
+                helperCosts = helperCosts + helper(husbandry);
+                farmId = husbandry:getOwnerFarmId();
             end;
         end;
     end;
+    g_currentMission:addMoney(-helperCosts, farmId, MoneyType.ANIMAL_UPKEEP, true, true);
 end;
 
 function animalHelper:doForHusbandry(husbandry)
@@ -155,7 +173,9 @@ function animalHelper:getFillTypes(foodModule)
 end;
 
 function animalHelper:trainHorses(husbandry) 
-    if husbandry.modulesByName.animals.animalType ~= "HORSE" then return;
+    if husbandry.modulesByName.animals.animalType ~= "HORSE" then 
+        return 
+    end;
 
     -- loop through animals in Husbandry:
     for _,animal in pairs(husbandry:getAnimals()) do

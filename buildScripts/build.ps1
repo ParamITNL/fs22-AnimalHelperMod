@@ -2,11 +2,11 @@ param (
   [Boolean]$nozip = $false
 )
 
-Write-Output "Create folder instead of zip6: $($nozip)"
+Write-Output "Create folder instead of zip: $($nozip)"
 
-$destination = "C:\Users\peter\Documents\My Games\FarmingSimulator2019\mods\"
-$destinationFolder = "$($destination)happyAnimals\"
-$destinationZip = "$($destination)happyAnimals.zip"
+$destination = "D:\FS19\Mods\"
+$destinationFolder = "$($destination)AnimalHelper\"
+$destinationZip = "$($destination)FS19_AnimalHelper.zip"
 
 if ($nozip -eq $true) {
   Write-Output "Copying folder"
@@ -16,6 +16,6 @@ if ($nozip -eq $true) {
   }
   Copy-Item -Path *.lua, *.xml, *.dds -Destination "$($destination)\happyAnimals\"
 } else {
-  Write-Output "Copying zip-file"
+  Write-Output "Creating zip-file $($destinationZip)"
   Compress-Archive -Path *.lua, *.xml, *.dds -Force -CompressionLevel Optimal -DestinationPath "$($destinationZip)"
 }

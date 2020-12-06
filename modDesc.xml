@@ -44,7 +44,20 @@ Changelog:
     <extraSourceFiles>
         <sourceFile filename="animalHelper.lua" />
     </extraSourceFiles>
+	<l10n>
+		<text name ="input_ANIMAL_HELPER_HIRE_HELPER">
+            <nl>Huur dierenverzorger in</nl>
+			<en>Hire animal helper</en>
+		</text>
+	</l10n>
+    <actions>
+        <action name="ANIMAL_HELPER_HIRE_HELPER" category="ONFOOT" locked="false" ignoreComboMask="false" />
+    </actions>
     <inputBinding>
+        <actionBinding action="ANIMAL_HELPER_HIRE_HELPER" >
+            <binding device="KB_MOUSE_DEFAULT" input="KEY_lalt KEY_lctrl KEY_9" />
+            <binding device="GAMEPAD_DEFAULT"  input="BUTTON_5 BUTTON_6 BUTTON_1" axisComponent="+" neutralInput="0" index="1"/>
+        </actionBinding>
     </inputBinding>
     <actions>
     </actions>
