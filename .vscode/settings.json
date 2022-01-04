@@ -16,6 +16,8 @@
         "addConsoleCommand",
         "printf",
         "DebugUtil",
-        "g_fillTypeManager"
+        "g_fillTypeManager",
+        "GuiSoundPlayer",
+        "FillType"
     ]
 }
