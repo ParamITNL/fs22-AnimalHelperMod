@@ -1,0 +1,21 @@
+{
+    "Lua.diagnostics.globals": [
+        "g_currentMission",
+        "g_currentModName",
+        "g_messageCenter",
+        "Player",
+        "Utils",
+        "MessageType",
+        "addModEventListener",
+        "FSBaseMission",
+        "g_i18n",
+        "g_inputBinding",
+        "GS_PRIO_VERY_LOW",
+        "InputAction",
+        "MoneyType",
+        "addConsoleCommand",
+        "printf",
+        "DebugUtil",
+        "g_fillTypeManager"
+    ]
+}

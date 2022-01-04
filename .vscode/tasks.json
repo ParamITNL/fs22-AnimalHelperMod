@@ -13,11 +13,14 @@
         {
             "label": "Copy Mod to gamefolder",
             "type": "shell",
-            "command": "./buildScripts/build.ps1 $false",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            }
+            "command": "./buildScripts/build.ps1 -nozip $true -startFS $false",
+            "group": "build"
+        },
+        { 
+            "label": "Copy Mod to gamefolder and start game",
+            "type": "shell",
+            "command": "./buildscripts/build.ps1 -nozip $true -startFS $true",
+            "group": "build"
         }
     ]
 }
