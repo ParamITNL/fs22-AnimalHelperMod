@@ -1,15 +1,19 @@
-# fs19-HappyAnimalsMod
+# FS22_AnimalHelper
 
-This mod allows you to easily fill up all levels for your animal husbandries. I created this mod, because I found it a lot of effort to initialy fill up the husbandries after purchasing the animals. Keeping them filled up thereafter is part of my game :-) Thats why its bound to keyInput instead of continuously filling op the husbandries.
+This mod allows you to easily fill up all levels for your animal husbandries. I started created this mod, because I found it a lot of effort to initialy fill up the husbandries after purchasing the animals. This is what the FS19 version of this mod does. Nothing less, nothing more. 
+
+The FS22 version of the mod is changed to a more "permanent helper". The helper will tend to your animals daily at a fixed time (9 am). The helper will feed the animals, ride and clean your horses, top up the water and provide straw if needed.
+
+## Costs
+This mod uses the games economy to calculate prices for the food and straw used. Prices for training and cleaning the horses are (for now) fixed.
+
+## FS19 Version
+The FS19 version can be found in the FS19 branch. This version is no longer maintained.
 
 ## Usage
 
-While playing, press Ctrl + Alt + 9 for a complete refill.
-Mod fills foodTypes, water and straw for all AnimalTypes that come with FS19 (Cows, Pigs, Chicken, Horses, Sheep)
+While playing, press Ctrl + Alt + 9 (KeyBinding can be altered) to enable or disable the helpers.
 
-### Training horses
-
-After you have used the helper at least once in this game-session, the "helper" will train you horses on day change.
 
 ## History
 
@@ -18,16 +22,18 @@ Please refer to modDesc.xml for a complete changelog. The following releases are
 * xx-2018 v1.0 - Initial version
 * 11-2020 v1.1 - Scripts reworked to dynamically determine fillTypes to top up.
 * 11-2020 v1.1.1 - Training of horses has been added.
+* 01-2022 v22.0 - Updated mod to FS22. 
 
 ## Roadmap
 
 The following features are planned to be implemented in a feature release:
 
-1. Calculating costs for the different materials used.
-1. Filling the different foodgroups with the different filltypes available.
+1. Filling the different foodgroups with the different filltypes available, so you can reach a 100% productivity.
     1. I will try to choose the filltype based on the price of the materials. The cheapest FillType will be the one used to fill the group.
-    1. If the above bullet prooves too difficult, the FoodGroup will be filled, defided evenly over the different filltypes for this group.
-1. Use the seasons-pricing module for calculating the costs of the materials.
+    1. If the above bullet prooves too difficult, the FoodGroup will be filled, devided evenly over the different filltypes for this group.
+1. Translation of the different messages/texts. (Help is appreciated)
+1. By request: I'll try to use materials stored in your silos. If the food is available in the Silo, no costs will be calculated.
+
 
 ## Untested
 
