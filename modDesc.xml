@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
-<modDesc descVersion="40">
+<modDesc descVersion="61">
     <author>ParamIT</author>
-    <version>1.1.0.0</version>
+    <version>22.0</version>
     <title>
         <en>Animal Helper</en>
         <nl>Dieren verzorger</nl>
@@ -49,6 +49,9 @@ Changelog:
             <nl>Huur dierenverzorger in</nl>
 			<en>Hire animal helper</en>
 		</text>
+        <text name="ANIMAL_HELPER_UNREGISTERED"><en>AnimalHelper unregistered its eventlisteners.</en></text>
+        <text name="ANIMAL_HELPER_STARTED"><en>Hired Animal Helpers are starting their work.</en></text>
+        <text name="ANIMAL_HELPER_DONE"><en>Hired Animal Helpers are done. All animals are taken care off</en></text>
 	</l10n>
     <actions>
         <action name="ANIMAL_HELPER_HIRE_HELPER" category="ONFOOT" locked="false" ignoreComboMask="false" />
