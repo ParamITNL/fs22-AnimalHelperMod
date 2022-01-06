@@ -7,9 +7,10 @@
       - Cleanup Code
       - Make filling straw configurable
       - Save/Load configuration 
+      - Don't run while sleeping, or at least, don't generate the messages
 ]] 
 if (AnimalHelper ~= nil) then
-    print("AnimalHelper already exists, unregistering...");
+    printdbg("AnimalHelper already exists, unregistering...");
     g_currentMission.hud:addSideNotification(FSBaseMission.INGAME_NOTIFICATION_OK, string.format("%s", g_i18n.modEnvironments[AnimalHelper.modName].texts.ANIMAL_HELPER_UNREGISTERED))
     AnimalHelper:removeModEventListener(AnimalHelper);
 end
@@ -20,7 +21,7 @@ AnimalHelper = {
             return AnimalHelper:doForHorseHusbandry(husbandry, farmId);
         end,
         ["FALLBACK"] = function(husbandry, farmId)
-            printd("Hired running fallback method helper...");
+            printdbg("Hired running fallback method helper...");
             return AnimalHelper:doForHusbandry(husbandry, farmId);
         end
     },
@@ -35,7 +36,7 @@ function AnimalHelper:loadMap(name)
 end;
 
 function AnimalHelper:registerActionEventsPlayer()
-    printd("Registering Actions!");
+    printdbg("Registering Actions!");
     local valid, actionEventId, _ = g_inputBinding:registerActionEvent(InputAction.ANIMAL_HELPER_HIRE_HELPER, AnimalHelper,
         AnimalHelper.actionCallbackPlayer, false, true, false, true);
 
@@ -45,7 +46,7 @@ end
 
 function AnimalHelper:actionCallbackPlayer(actionName, keyStatus, arg4, arg5, arg6)
     if actionName == "ANIMAL_HELPER_HIRE_HELPER" then
-        printd("Enable AnimalHelper");
+        printdbg("Enable AnimalHelper");
         -- TODO: Add action to disable helper...
         AnimalHelper.enabled = AnimalHelper.enabled ~= true;
         local message
@@ -60,7 +61,7 @@ function AnimalHelper:actionCallbackPlayer(actionName, keyStatus, arg4, arg5, ar
 end;
 
 function AnimalHelper:hourChanged()
-    printd("Checking if helper is enabled...");
+    printdbg("Checking if helper is enabled...");
     if (AnimalHelper.enabled == true and (g_currentMission.environment.currentHour == 9 or AnimalHelper.isDebug == true)) then
         AnimalHelper:runHelpers();
     end
@@ -83,7 +84,7 @@ function AnimalHelper:runHelpers()
             local costs = helper(clusterHusbandry, farmId);
 
             if (costs ~= nil) then
-                printd(string.format("AnimalHelper for husbandry %s done. Costs were %s", clusterHusbandry.animalTypeName, -costs))
+                printdbg(string.format("AnimalHelper for husbandry %s done. Costs were %s", clusterHusbandry.animalTypeName, -costs))
                 g_currentMission:addMoney(-costs, farmId, MoneyType.ANIMAL_UPKEEP, true, true)
             else
                 print(string.format("WARNING: helper '%s' didn't charge anything!", helper));
@@ -95,7 +96,7 @@ end;
 
 function AnimalHelper:doForHusbandry(clusterHusbandry, farmId)
     local currentCosts = 0
-    printd("Fallback helper for husbandry " .. clusterHusbandry.animalTypeName);
+    printdbg("Fallback helper for husbandry " .. clusterHusbandry.animalTypeName);
 
     if (clusterHusbandry ~= nil) then
         currentCosts = currentCosts + AnimalHelper:doFeed(clusterHusbandry, farmId)
@@ -109,7 +110,7 @@ end;
 
 function AnimalHelper:giveWater(clusterHusbandry, farmId) 
     local freeCapacity = clusterHusbandry.placeable:getHusbandryFreeCapacity(FillType.WATER)
-    printd("Free capacity for water = %d l", freeCapacity)
+    printdbg("Free capacity for water = %d l", freeCapacity)
 
     if (freeCapacity ~= nil and freeCapacity > 0) then
         clusterHusbandry.placeable:addHusbandryFillLevelFromTool(farmId, freeCapacity, FillType.WATER, nil)
@@ -126,7 +127,7 @@ function AnimalHelper:giveStraw(clusterHusbandry, farmId)
     local pricePerLiter = g_currentMission.economyManager:getPricePerLiter(FillType.STRAW)
     local applied = clusterHusbandry.placeable:addHusbandryFillLevelFromTool(farmId, freeCapacity, FillType.STRAW, nil)
     strawCosts = applied * pricePerLiter
-    printd("%d l of straw added for € %d (%d / lt)", applied, strawCosts, pricePerLiter)
+    printdbg("%d l of straw added for € %d (%d / lt)", applied, strawCosts, pricePerLiter)
 
     return strawCosts
 end
@@ -139,7 +140,7 @@ function AnimalHelper:doFeed(clusterHusbandry, farmId)
     local foodCosts = 0
     
     for idx,foodGroup in pairs(animalFood.groups) do
-        printd("Currently processing foodgroup '%s'", foodGroup.title)
+        printdbg("Currently processing foodgroup '%s'", foodGroup.title)
         DebugUtil.printTableRecursively(foodGroup)
 
         local fillTypeIndex = AnimalHelper:getFillTypeIndexToFill(foodGroup)
@@ -152,10 +153,10 @@ function AnimalHelper:doFeed(clusterHusbandry, farmId)
 
         clusterHusbandry.placeable:addFood(farmId, fillAmount, fillTypeIndex, nil)
 
-        printd(string.format("Costs for %s  (of %s) liter of fillType '%s' are %s", fillAmount, freeCapacity, fillTypeIndex, priceForFood))
+        printdbg(string.format("Costs for %s  (of %s) liter of fillType '%s' are %s", fillAmount, freeCapacity, fillTypeIndex, priceForFood))
         foodCosts = foodCosts + priceForFood
 
-        printd(string.format("FoodGroup %s done.", idx))
+        printdbg(string.format("FoodGroup %s done.", idx))
     end
 
     return foodCosts
@@ -186,7 +187,7 @@ end;
 
 addModEventListener(AnimalHelper);
 
-function printd(str, ...)
+function printdbg(str, ...)
     if (AnimalHelper.isDebug == true) then
         print(string.format(str, ...))
     end
