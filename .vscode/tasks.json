@@ -5,9 +5,6 @@
             "label": "Create Mod Zip",
             "type": "shell",
             "command": "./buildScripts/build.ps1",
-            "windows": {
-                "command": ".\\buildScripts\\build.ps1"
-            },
             "group": "build"
         },
         {

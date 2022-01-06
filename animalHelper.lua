@@ -2,6 +2,11 @@
     Animal Helper 22
     Author:     ParamIT
     Version:    22
+    ToDo:
+      - Use food/straw from storage when available
+      - Cleanup Code
+      - Make filling straw configurable
+      - Save/Load configuration 
 ]] 
 if (AnimalHelper ~= nil) then
     print("AnimalHelper already exists, unregistering...");
@@ -95,6 +100,7 @@ function AnimalHelper:doForHusbandry(clusterHusbandry, farmId)
     if (clusterHusbandry ~= nil) then
         currentCosts = currentCosts + AnimalHelper:doFeed(clusterHusbandry, farmId)
         currentCosts = currentCosts + AnimalHelper:giveWater(clusterHusbandry, farmId)
+        -- TODO: Do we always want to top up straw? You won't be able to produce slurry then.
         currentCosts = currentCosts + AnimalHelper:giveStraw(clusterHusbandry, farmId)
     end
 
