@@ -9,6 +9,11 @@
       - Save/Load configuration 
       - Don't run while sleeping, or at least, don't generate the messages
 ]] 
+--- AnimalHelper module
+-- @module AnimalHelper
+-- @author ParamIT_NL
+-- @copyright © 2022, ParamIT 
+-- @license MIT
 if (AnimalHelper ~= nil) then
     printdbg("AnimalHelper already exists, unregistering...");
     g_currentMission.hud:addSideNotification(FSBaseMission.INGAME_NOTIFICATION_OK, string.format("%s", g_i18n.modEnvironments[AnimalHelper.modName].texts.ANIMAL_HELPER_UNREGISTERED))
@@ -47,7 +52,7 @@ end
 
 function AnimalHelper:actionCallbackPlayer(actionName, keyStatus, arg4, arg5, arg6)
     if actionName == "ANIMAL_HELPER_HIRE_HELPER" then
-        -- TODO: Add action to disable helper...
+        -- @ToDo: Add action to disable helper...
         AnimalHelper.enabled = AnimalHelper.enabled ~= true;
         local message
         if (AnimalHelper.enabled) then
@@ -60,6 +65,9 @@ function AnimalHelper:actionCallbackPlayer(actionName, keyStatus, arg4, arg5, ar
     end
 end;
 
+---hourChanged event handler
+-- Handles the hourChanged event. If the time is correct and helpers is enabled, the runHelpers method will be invoked.
+-- @see AnimalHelper:runHelpers
 function AnimalHelper:hourChanged()
     printdbg("Checking if helper is enabled...");
     if (AnimalHelper.enabled == true and (g_currentMission.environment.currentHour == 9 or AnimalHelper.isDebug == true)) then
@@ -69,7 +77,8 @@ end;
 
 -- Add a consolecommand to manually run the helpers if AnimalHelper:isDebug is true:
 if(AnimalHelper.isDebug) then addConsoleCommand("ahRunHelpers", "Hire animal helpers now", "runHelpers", AnimalHelper) end
----Run the hired helpers for all husbandries
+
+--- Run the hired helpers for all husbandries.
 function AnimalHelper:runHelpers() 
     g_currentMission.hud:addSideNotification(FSBaseMission.INGAME_NOTIFICATION_OK, string.format("%s", g_i18n.modEnvironments[AnimalHelper.modName].texts.ANIMAL_HELPER_STARTED))
     for _,clusterHusbandry in pairs(g_currentMission.husbandrySystem.clusterHusbandries) do
@@ -90,14 +99,14 @@ function AnimalHelper:runHelpers()
     end
 
     -- Notify the player that the helpers are done.
-    -- ToDo: Don't notify when sleeping!
+    -- @ToDo: Don't notify when sleeping!
     g_currentMission.hud:addSideNotification(FSBaseMission.INGAME_NOTIFICATION_OK, string.format("%s", g_i18n.modEnvironments[AnimalHelper.modName].texts.ANIMAL_HELPER_DONE))
 end;
 
----Default Husbandry Helper
----@param clusterHusbandry AnimalClusterHusbandry The husbandry to run the helper for
----@param farmId any The farmId of the player
----@return integer costs The costs calculated for the daily upkeep of the animals
+--- Default Husbandry Helper.
+-- @tparam AnimalClusterHusbandry clusterHusbandry The husbandry to run the helper for
+-- @tparam integer farmId The farmId of the player
+-- @treturn integer The costs calculated for the daily upkeep of the animals
 function AnimalHelper:doForHusbandry(clusterHusbandry, farmId)
     local currentCosts = 0
     printdbg("Fallback helper for husbandry " .. clusterHusbandry.animalTypeName);
@@ -105,17 +114,17 @@ function AnimalHelper:doForHusbandry(clusterHusbandry, farmId)
     if (clusterHusbandry ~= nil) then
         currentCosts = currentCosts + AnimalHelper:doFeed(clusterHusbandry, farmId)
         currentCosts = currentCosts + AnimalHelper:giveWater(clusterHusbandry, farmId)
-        -- TODO: Do we always want to top up straw? You won't be able to produce slurry then.
+        -- @ToDo: Do we always want to top up straw? You won't be able to produce slurry then.
         currentCosts = currentCosts + AnimalHelper:giveStraw(clusterHusbandry, farmId)
     end
 
     return currentCosts;
 end;
 
----Fill husbandry water level
----@param clusterHusbandry AnimalClusterHusbandry The husbandry to fill the water levels for
----@param farmId any The players farmId
----@return integer costs The costs calculated for the water. For now, water is free.
+--- Fill husbandry water level
+-- @tparam AnimalClusterHusbandry clusterHusbandry The husbandry to fill the water levels for
+-- @param farmId The players farmId
+-- @treturn integer The costs calculated for the water. For now, water is free.
 function AnimalHelper:giveWater(clusterHusbandry, farmId) 
     local freeCapacity = clusterHusbandry.placeable:getHusbandryFreeCapacity(FillType.WATER)
     printdbg("Free capacity for water = %d l", freeCapacity)
@@ -128,10 +137,10 @@ function AnimalHelper:giveWater(clusterHusbandry, farmId)
     return 0
 end
 
----Fill husbandry Straw level
----@param clusterHusbandry AnimalClusterHusbandry The husbandry to fill the straw levels for
----@param farmId any The players farmId
----@return integer costs The costs calculated for the straw.
+--- Fill husbandry Straw level
+-- @param clusterHusbandry AnimalClusterHusbandry The husbandry to fill the straw levels for
+-- @param farmId any The players farmId
+-- @return integer costs The costs calculated for the straw.
 function AnimalHelper:giveStraw(clusterHusbandry, farmId) 
     local freeCapacity = clusterHusbandry.placeable:getHusbandryFreeCapacity(FillType.STRAW)
     local strawCosts = 0
@@ -144,12 +153,12 @@ function AnimalHelper:giveStraw(clusterHusbandry, farmId)
     return strawCosts
 end
 
----Feed the animals
----@param clusterHusbandry AnimalClusterHusbandry The husbandry to feed.
----@param farmId any The farmId of the players farm
----@return integer costs The costs calculated for the food
----@ToDo: Use food from storage when available.
+--- Feed the animals
+-- @param clusterHusbandry AnimalClusterHusbandry The husbandry to feed.
+-- @param farmId any The farmId of the players farm
+-- @return integer costs The costs calculated for the food
 function AnimalHelper:doFeed(clusterHusbandry, farmId) 
+    -- @ToDo: Use food from storage when available.
     -- Take care of food:
     local animalTypeIndex = clusterHusbandry.animalSystem:getTypeIndexByName(clusterHusbandry.animalTypeName)
     local animalFood = g_currentMission.animalFoodSystem:getAnimalFood(animalTypeIndex)
@@ -180,21 +189,21 @@ function AnimalHelper:doFeed(clusterHusbandry, farmId)
     return foodCosts
 end
 
----Get the fillTypeIndex for the fillType to use for this foodGroup
----@param foodGroup any The foodgroup we are filling
----@return any fillTypeIndex fillTypeIndex we are going to use for this foodgroup.
----@TODO Base chosen fillType on availability in storage, ie which fillType will be the cheapest.
+--- Get the fillTypeIndex for the fillType to use for this foodGroup
+-- @param foodGroup any The foodgroup we are filling
+-- @return fillTypeIndex we are going to use for this foodgroup.
 function AnimalHelper:getFillTypeIndexToFill(foodGroup) 
-    -- TODO: Choose the cheapest
+    -- @ToDo: Base chosen fillType on availability in storage, ie which fillType will be the cheapest.
+    -- @Todo: Choose the cheapest
     -- 1. Available in storage
     -- 2. Cheapest to buy.
     return foodGroup.fillTypes[1]
 end;
 
----Helper method for horse-husbandries
----@param husbandry AnimalClusterHusbandry The husbandry to tend to
----@param farmId any the Players FarmId.
----@return integer costs The costs calculatod for taking care of the horses.
+--- Helper method for horse-husbandries
+-- @param husbandry AnimalClusterHusbandry The husbandry to tend to
+-- @param farmId any the Players FarmId.
+-- @return integer costs The costs calculatod for taking care of the horses.
 function AnimalHelper:doForHorseHusbandry(husbandry, farmId)
     local currentCosts = self:doForHusbandry(husbandry, farmId)
 
@@ -215,9 +224,9 @@ end;
 -- Register AnimalHelper as an EventListener
 addModEventListener(AnimalHelper);
 
----Method that prints (formatted) text only when AnimalHelper.isDebug is true.
----@param str string inputstring
----@param ... string format arguments
+--- Method that prints (formatted) text only when AnimalHelper.isDebug is true.
+-- @param str string inputstring
+-- @param ... string format arguments
 function printdbg(str, ...)
     if (AnimalHelper.isDebug == true) then
         print(string.format(str, ...))
