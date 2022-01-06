@@ -65,7 +65,7 @@ function AnimalHelper:actionCallbackPlayer(actionName, keyStatus, arg4, arg5, ar
     end
 end;
 
----hourChanged event handler
+--- hourChanged event handler.
 -- Handles the hourChanged event. If the time is correct and helpers is enabled, the runHelpers method will be invoked.
 -- @see AnimalHelper:runHelpers
 function AnimalHelper:hourChanged()
