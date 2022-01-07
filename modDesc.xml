@@ -2,7 +2,10 @@
 <modDesc descVersion="61">
     <author>ParamIT</author>
     <version>22.0</version>
-    <title><en>Animal Helper</en></title>
+	<title>
+		<en>Animal Helper</en>
+		<fr>Ouvrier pour les animaux</fr>
+	</title>
     <description>
         <en><![CDATA[Easily make your animals happy by filling up all their needs (Food, water, straw, horse riding)
 Pending features:
@@ -12,6 +15,14 @@ Changelog:
 - v22.0 Converted mod to FS22
 ]]>
         </en>
+        <fr><![CDATA[Répondre automatiquement aux besoins de vos animaux (Nourriture, eau, paillage, gestion des chevaux)
+Fonctionnalités en cours de développement :
+- Utilisation de la nourriture depuis vos propres silos de stockage ou sinon achat auprès du point de vente le moins cher.
+
+Journal des changements:
+- v22.0 Mod converti pour FS22
+]]>
+        </fr>
     </description>
     <iconFilename>happyAnimals.dds</iconFilename>
     <multiplayer supported="false"/>
@@ -19,12 +30,30 @@ Changelog:
         <sourceFile filename="animalHelper.lua" />
     </extraSourceFiles>
 	<l10n>
-		<text name="input_ANIMAL_HELPER_HIRE_HELPER"><en>Hire animal helper</en></text>
-        <text name="ANIMAL_HELPER_UNREGISTERED"><en>AnimalHelper unregistered its eventlisteners.</en></text>
-        <text name="ANIMAL_HELPER_STARTED"><en>Hired Animal Helpers are starting their work.</en></text>
-        <text name="ANIMAL_HELPER_DONE"><en>Hired Animal Helpers are done. All animals are taken care off</en></text>
-        <text name="ANIMAL_HELPER_ENABLED"><en>Animal Helpers ENABLED</en></text>
-        <text name="ANIMAL_HELPER_DISABLED"><en>Animal Helpers DISABLED</en></text>
+		<text name="input_ANIMAL_HELPER_HIRE_HELPER">
+			<en>Hire animal helper</en>
+			<fr>Embaucher l'ouvrier pour les animaux</fr>
+		</text>
+        	<text name="ANIMAL_HELPER_UNREGISTERED">
+			<en>AnimalHelper unregistered its eventlisteners.</en>
+			<fr>L'ouvrier des animaux ne s'est pas présenté aux tâches.</fr>
+		</text>
+       		<text name="ANIMAL_HELPER_STARTED">
+			<en>Hired Animal Helpers are starting their work.</en>
+			<fr>L'ouvrier des animaux a démarré son travail.</fr>
+		</text>
+        	<text name="ANIMAL_HELPER_DONE">
+			<en>Hired Animal Helpers are done. All animals are taken care off</en>
+			<fr>Le travail de l'ouvrier des animaux est terminé. Il a pris soin de tous vos animaux.</fr>
+		</text>
+        	<text name="ANIMAL_HELPER_ENABLED">
+			<en>Animal Helpers ENABLED</en>
+			<fr>Ouvrier des animaux activé</fr>
+		</text>
+        	<text name="ANIMAL_HELPER_DISABLED">
+			<en>Animal Helpers DISABLED</en>
+			<fr>Ouvrier des animaux desactivé</fr>
+		</text>
 	</l10n>
     <actions>
         <action name="ANIMAL_HELPER_HIRE_HELPER" category="ONFOOT" locked="false" ignoreComboMask="false" />
