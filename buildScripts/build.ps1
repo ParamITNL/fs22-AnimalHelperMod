@@ -1,6 +1,6 @@
 param (
   [Boolean]$nozip = $false,
-  [Boolean]$startFS = $true
+  [Boolean]$startFS = $false
 )
 
 Write-Output "Create folder instead of zip: $($nozip)"
@@ -25,7 +25,7 @@ if ($nozip -eq $true) {
 } else {
   if ([System.IO.Directory]::Exists($destinationFolder)) {
     Write-Warning "Mod-folder exists, will be deleted!"
-    [System.IO.Directory]::Delete($destinationFolder)
+    [System.IO.Directory]::Delete($destinationFolder, $true)
   }
 
   Write-Output "Creating zip-file $($destinationZip)"

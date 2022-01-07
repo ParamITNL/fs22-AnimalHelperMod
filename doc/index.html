@@ -1,0 +1,337 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>ldoc</h1>
+
+
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><strong>AnimalHelper</strong></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>AnimalHelper</code></h1>
+<p>AnimalHelper module</p>
+<p></p>
+    <h3>Info:</h3>
+    <ul>
+        <li><strong>Copyright</strong>: © 2022, ParamIT</li>
+        <li><strong>License</strong>: MIT</li>
+        <li><strong>Author</strong>: ParamIT_NL</li>
+    </ul>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#hourChanged">hourChanged ()</a></td>
+	<td class="summary">hourChanged event handler.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#runHelpers">runHelpers ()</a></td>
+	<td class="summary">Run the hired helpers for all husbandries.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#doForHusbandry">doForHusbandry (clusterHusbandry, farmId)</a></td>
+	<td class="summary">Default Husbandry Helper.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#giveWater">giveWater (clusterHusbandry, farmId)</a></td>
+	<td class="summary">Fill husbandry water level</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#giveStraw">giveStraw (clusterHusbandry, farmId)</a></td>
+	<td class="summary">Fill husbandry Straw level</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#doFeed">doFeed (clusterHusbandry, farmId)</a></td>
+	<td class="summary">Feed the animals</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getFillTypeIndexToFill">getFillTypeIndexToFill (foodGroup)</a></td>
+	<td class="summary">Get the fillTypeIndex for the fillType to use for this foodGroup</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#doForHorseHusbandry">doForHorseHusbandry (husbandry, farmId)</a></td>
+	<td class="summary">Helper method for horse-husbandries</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#printdbg">printdbg (str, ...)</a></td>
+	<td class="summary">Method that prints (formatted) text only when AnimalHelper.isDebug is true.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "hourChanged"></a>
+    <strong>hourChanged ()</strong>
+    </dt>
+    <dd>
+    hourChanged event handler.
+ Handles the hourChanged event. If the time is correct and helpers is enabled, the runHelpers method will be invoked.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "runHelpers"></a>
+    <strong>runHelpers ()</strong>
+    </dt>
+    <dd>
+    Run the hired helpers for all husbandries.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "doForHusbandry"></a>
+    <strong>doForHusbandry (clusterHusbandry, farmId)</strong>
+    </dt>
+    <dd>
+    Default Husbandry Helper.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">clusterHusbandry</span>
+            <span class="types"><span class="type">AnimalClusterHusbandry</span></span>
+         The husbandry to run the helper for
+        </li>
+        <li><span class="parameter">farmId</span>
+            <span class="types"><span class="type">integer</span></span>
+         The farmId of the player
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">integer</span></span>
+        The costs calculated for the daily upkeep of the animals
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "giveWater"></a>
+    <strong>giveWater (clusterHusbandry, farmId)</strong>
+    </dt>
+    <dd>
+    Fill husbandry water level
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">clusterHusbandry</span>
+            <span class="types"><span class="type">AnimalClusterHusbandry</span></span>
+         The husbandry to fill the water levels for
+        </li>
+        <li><span class="parameter">farmId</span>
+         The players farmId
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">integer</span></span>
+        The costs calculated for the water. For now, water is free.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "giveStraw"></a>
+    <strong>giveStraw (clusterHusbandry, farmId)</strong>
+    </dt>
+    <dd>
+    Fill husbandry Straw level
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">clusterHusbandry</span>
+         AnimalClusterHusbandry The husbandry to fill the straw levels for
+        </li>
+        <li><span class="parameter">farmId</span>
+         any The players farmId
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        integer costs The costs calculated for the straw.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "doFeed"></a>
+    <strong>doFeed (clusterHusbandry, farmId)</strong>
+    </dt>
+    <dd>
+    Feed the animals
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">clusterHusbandry</span>
+         AnimalClusterHusbandry The husbandry to feed.
+        </li>
+        <li><span class="parameter">farmId</span>
+         any The farmId of the players farm
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        integer costs The costs calculated for the food
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getFillTypeIndexToFill"></a>
+    <strong>getFillTypeIndexToFill (foodGroup)</strong>
+    </dt>
+    <dd>
+    Get the fillTypeIndex for the fillType to use for this foodGroup
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">foodGroup</span>
+         any The foodgroup we are filling
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        fillTypeIndex we are going to use for this foodgroup.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "doForHorseHusbandry"></a>
+    <strong>doForHorseHusbandry (husbandry, farmId)</strong>
+    </dt>
+    <dd>
+    Helper method for horse-husbandries
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">husbandry</span>
+         AnimalClusterHusbandry The husbandry to tend to
+        </li>
+        <li><span class="parameter">farmId</span>
+         any the Players FarmId.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        integer costs The costs calculatod for taking care of the horses.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "printdbg"></a>
+    <strong>printdbg (str, ...)</strong>
+    </dt>
+    <dd>
+    Method that prints (formatted) text only when AnimalHelper.isDebug is true.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">str</span>
+         string inputstring
+        </li>
+        <li><span class="parameter">...</span>
+         string format arguments
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2022-01-07 00:55:13 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>
