@@ -6,13 +6,13 @@
       - Use food/straw from storage when available
       - Cleanup Code
       - Make filling straw configurable
-      - Save/Load configuration 
+      - Save/Load that configuration
       - Don't run while sleeping, or at least, don't generate the messages
 ]] 
 --- AnimalHelper module
 -- @module AnimalHelper
 -- @author ParamIT_NL
--- @copyright © 2022, ParamIT 
+-- @copyright © 2022, ParamIT
 -- @license MIT
 if (AnimalHelper ~= nil) then
     printdbg("AnimalHelper already exists, unregistering...");
@@ -25,8 +25,8 @@ AnimalHelper = {
         ["HORSE"] = function(husbandry, farmId)
             return AnimalHelper:doForHorseHusbandry(husbandry, farmId);
         end,
-        ["FALLBACK"] = function(husbandry, farmId)
-            printdbg("Hired running fallback method helper...");
+        ["DEFAULT"] = function(husbandry, farmId)
+            printdbg("running default helper...");
             return AnimalHelper:doForHusbandry(husbandry, farmId);
         end
     },
@@ -52,7 +52,7 @@ end
 
 function AnimalHelper:actionCallbackPlayer(actionName, keyStatus, arg4, arg5, arg6)
     if actionName == "ANIMAL_HELPER_HIRE_HELPER" then
-        -- @ToDo: Add action to disable helper...
+        -- @ToDo: Add action to disable helper, or change text in help-menu
         AnimalHelper.enabled = AnimalHelper.enabled ~= true;
         local message
         if (AnimalHelper.enabled) then
@@ -70,7 +70,9 @@ end;
 -- @see AnimalHelper:runHelpers
 function AnimalHelper:hourChanged()
     printdbg("Checking if helper is enabled...");
-    if (AnimalHelper.enabled == true and (g_currentMission.environment.currentHour == 9 or AnimalHelper.isDebug == true)) then
+    local isTime = g_currentMission.environment.currentHour == 9 or AnimalHelper.isDebug
+    local isSleeping = g_sleepManager:getIsSleeping()
+    if (AnimalHelper.enabled and isTime and not isSleeping) then
         AnimalHelper:runHelpers();
     end
 end;
@@ -84,7 +86,7 @@ function AnimalHelper:runHelpers()
     for _,clusterHusbandry in pairs(g_currentMission.husbandrySystem.clusterHusbandries) do
 
         -- Get Helper for Current Husbandry:
-        local helper = Utils.getNoNil(AnimalHelper.helpers[clusterHusbandry.animalTypeName], AnimalHelper.helpers.FALLBACK);
+        local helper = Utils.getNoNil(AnimalHelper.helpers[clusterHusbandry.animalTypeName], AnimalHelper.helpers.DEFAULT);
 
         -- If we have a helper, run it. We should have one, because we should fallback to the default helper.
         if (helper ~= nil) then
@@ -165,7 +167,7 @@ function AnimalHelper:doFeed(clusterHusbandry, farmId)
     local freeCapacity = nil
     local foodCosts = 0
     
-    -- Fill Eacg FoodGroup
+    -- Fill Each FoodGroup
     for idx,foodGroup in pairs(animalFood.groups) do
         printdbg("Currently processing foodgroup '%s'", foodGroup.title)
         DebugUtil.printTableRecursively(foodGroup)
