@@ -18,6 +18,7 @@
         "DebugUtil",
         "g_fillTypeManager",
         "GuiSoundPlayer",
-        "FillType"
+        "FillType",
+        "g_sleepManager"
     ]
 }
