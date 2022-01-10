@@ -29,8 +29,8 @@ Please refer to modDesc.xml for a complete changelog. The following releases are
 The following features are planned to be implemented in a feature release:
 
 1. Filling the different foodgroups with the different filltypes available, so you can reach a 100% productivity.
-    1. I will try to choose the filltype based on the price of the materials. The cheapest FillType will be the one used to fill the group.
-    1. If the above bullet prooves too difficult, the FoodGroup will be filled, devided evenly over the different filltypes for this group.
+    1. Use the FillTypes available in your storage first to feed the animals. If no food is available, it will be bought.
+    2. I will try to choose the filltype based on the price of the materials. The cheapest FillType will be the one used to fill the group.
 1. Translation of the different messages/texts. (Help is appreciated)
 1. By request: I'll try to use materials stored in your silos. If the food is available in the Silo, no costs will be calculated.
 
