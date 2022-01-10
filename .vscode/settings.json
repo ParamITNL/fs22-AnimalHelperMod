@@ -19,6 +19,15 @@
         "g_fillTypeManager",
         "GuiSoundPlayer",
         "FillType",
-        "g_sleepManager"
+        "g_sleepManager",
+        "g_storageSystem",
+        "getUserProfileAppPath",
+        "fileExists",
+        "loadXMLFile",
+        "delete",
+        "XMLFile"
+    ],
+    "Lua.diagnostics.disable": [
+        "empty-block"
     ]
 }

@@ -12,7 +12,9 @@ Pending features:
 - Use food from own storage if available. Otherwise buy.
 
 Changelog:
-- v22.0 Converted mod to FS22
+- v22.0 
+	* Converted mod to FS22
+	* French translations by Lactic68
 ]]>
         </en>
         <fr><![CDATA[Répondre automatiquement aux besoins de vos animaux (Nourriture, eau, paillage, gestion des chevaux)

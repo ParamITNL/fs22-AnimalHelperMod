@@ -5,9 +5,8 @@
     ToDo:
       - Use food/straw from storage when available
       - Cleanup Code
-      - Make filling straw configurable
-      - Save/Load that configuration
-      - Don't run while sleeping, or at least, don't generate the messages
+      - Make filling straw configurable (Done)
+        - Add action or GUI to enable/disable filling of straw
 ]] 
 --- AnimalHelper module
 -- @module AnimalHelper
@@ -32,13 +31,59 @@ AnimalHelper = {
     },
     enabled = false,
     isDebug = true,
+    fillStraw = true,
     modName = g_currentModName,
 }
 
+---loadMap EventHandler
+---@tparam string name
 function AnimalHelper:loadMap(name)
+    AnimalHelper:loadSettings()
     g_messageCenter:subscribe(MessageType.HOUR_CHANGED, self.hourChanged, self);
     Player.registerActionEvents = Utils.appendedFunction(Player.registerActionEvents, self.registerActionEventsPlayer);
+    FSBaseMission.saveSavegame = Utils.appendedFunction(FSBaseMission.saveSavegame, self.saveSettings);
 end;
+
+--- get the filename of the xml settings are saved to/from
+-- @treturn string the filename
+local function getSaveFileName()
+    local xmlFilePath = g_currentMission.missionInfo.savegameDirectory;
+	if xmlFilePath == nil then
+        xmlFilePath = string.format("%ssavegame%d",
+            getUserProfileAppPath(),
+            g_currentMission.missionInfo.savegameIndex)
+	end;
+    xmlFilePath = string.format("%s/%s.xml", xmlFilePath, AnimalHelper.modName)
+
+    return xmlFilePath
+end
+
+function AnimalHelper:loadSettings()
+    local xmlFilePath = getSaveFileName()
+
+    if fileExists(xmlFilePath) then
+        local key = AnimalHelper.modName
+        local xmlFile = XMLFile.load(AnimalHelper.modName, xmlFilePath)
+        if xmlFile ~= nil then
+            AnimalHelper.enabled = xmlFile:getBool(key..".isEnabled", AnimalHelper.enabled)
+            AnimalHelper.isDebug = xmlFile:getBool(key..".isDebug", false)
+            AnimalHelper.fillStraw = xmlFile:getBool(key..".fillStraw", AnimalHelper.fillStraw)
+        end
+    end
+end
+
+--- Save the current settings when saving the game.
+function AnimalHelper:saveSettings()
+    print("Saving AnimalHelper settings")
+    local xmlFilePath = getSaveFileName()
+    local key = AnimalHelper.modName
+    local xmlFile = XMLFile.create(key, xmlFilePath, key)
+    xmlFile:setBool(key..".isEnabled", AnimalHelper.enabled)
+    xmlFile:setBool(key..".isDebug", AnimalHelper.isDebug)
+    xmlFile:setBool(key..".fillStraw", AnimalHelper.fillStraw)
+    xmlFile:save();
+	xmlFile:delete();
+end
 
 function AnimalHelper:registerActionEventsPlayer()
     -- @ToDo Change action text when helpers are enabled.
@@ -111,13 +156,15 @@ end;
 -- @treturn integer The costs calculated for the daily upkeep of the animals
 function AnimalHelper:doForHusbandry(clusterHusbandry, farmId)
     local currentCosts = 0
-    printdbg("Fallback helper for husbandry " .. clusterHusbandry.animalTypeName);
+    printdbg("Default helper for husbandry " .. clusterHusbandry.animalTypeName);
 
     if (clusterHusbandry ~= nil) then
         currentCosts = currentCosts + AnimalHelper:doFeed(clusterHusbandry, farmId)
         currentCosts = currentCosts + AnimalHelper:giveWater(clusterHusbandry, farmId)
-        -- @ToDo: Do we always want to top up straw? You won't be able to produce slurry then.
-        currentCosts = currentCosts + AnimalHelper:giveStraw(clusterHusbandry, farmId)
+
+        if (AnimalHelper.giveStraw) then
+            currentCosts = currentCosts + AnimalHelper:giveStraw(clusterHusbandry, farmId)
+        end
     end
 
     return currentCosts;
@@ -169,9 +216,6 @@ function AnimalHelper:doFeed(clusterHusbandry, farmId)
     
     -- Fill Each FoodGroup
     for idx,foodGroup in pairs(animalFood.groups) do
-        printdbg("Currently processing foodgroup '%s'", foodGroup.title)
-        DebugUtil.printTableRecursively(foodGroup)
-
         local fillTypeIndex = AnimalHelper:getFillTypeIndexToFill(foodGroup)
         freeCapacity = freeCapacity or clusterHusbandry.placeable:getFreeFoodCapacity(fillTypeIndex)
 
@@ -195,8 +239,26 @@ end
 -- @param foodGroup any The foodgroup we are filling
 -- @return fillTypeIndex we are going to use for this foodgroup.
 function AnimalHelper:getFillTypeIndexToFill(foodGroup) 
+    local storedFillType = {
+        fillTypeIndex = 0,
+        amount = 0,
+        storageId = nil
+    };
+
+    local storedFillTypes = {};
+
+    for idx,fillType in pairs(foodGroup.fillTypes) do
+        printdbg("Checking Storages for available fillTypes:")
+        for stIdx, storage in ipairs(g_currentMission.storageSystem.storages) do
+            local fillLevelInStorage = storage.fillLevels[fillType];
+            printdbg("fillLevel for fillType %s is %d", fillType, fillLevelInStorage)
+        end
+    end
+
     -- @ToDo: Base chosen fillType on availability in storage, ie which fillType will be the cheapest.
     -- @Todo: Choose the cheapest
+
+
     -- 1. Available in storage
     -- 2. Cheapest to buy.
     return foodGroup.fillTypes[1]
@@ -235,4 +297,48 @@ function printdbg(str, ...)
     end
 end
 
+--[[
+    function StoreDeliveries:saveSettings()
+
+	
+
+end;
+
+function StoreDeliveries:loadSettings()
+
+	local savegameFolderPath = g_currentMission.missionInfo.savegameDirectory;
+	if savegameFolderPath == nil then
+		savegameFolderPath = ('%ssavegame%d'):format(getUserProfileAppPath(), g_currentMission.missionInfo.savegameIndex);
+	end;
+	savegameFolderPath = savegameFolderPath.."/"
+	local key = "storeDeliveries";
+
+	if fileExists(savegameFolderPath.."storeDeliveries.xml") then
+		local xmlFile = loadXMLFile(key, savegameFolderPath.."storeDeliveries.xml");
+		StoreDeliveries.isLoaded = getXMLBool(xmlFile, key.."#isLoaded");
+		if StoreDeliveries.isLoaded then
+			local storePlace = g_currentMission.storeSpawnPlaces[1];
+			storePlace.startX = getXMLFloat(xmlFile, key..".storeLocation#x");
+			storePlace.startY = getXMLFloat(xmlFile, key..".storeLocation#y");
+			storePlace.startZ = getXMLFloat(xmlFile, key..".storeLocation#z");
+			storePlace.rotX = getXMLFloat(xmlFile, key..".storeRotation#x");
+			storePlace.rotY = getXMLFloat(xmlFile, key..".storeRotation#y");
+			storePlace.rotZ = getXMLFloat(xmlFile, key..".storeRotation#z");
+			storePlace.dirX = getXMLFloat(xmlFile, key..".storeDirection#x");
+			storePlace.dirY = getXMLFloat(xmlFile, key..".storeDirection#y");
+			storePlace.dirZ = getXMLFloat(xmlFile, key..".storeDirection#z");
+			storePlace.dirPerpX = getXMLFloat(xmlFile, key..".storePerpDirection#x");
+			storePlace.dirPerpY = getXMLFloat(xmlFile, key..".storePerpDirection#y");
+			storePlace.dirPerpZ = getXMLFloat(xmlFile, key..".storePerpDirection#z");
+			storePlace.teleportX = getXMLFloat(xmlFile, key..".storeTeleportLocation#x");
+			storePlace.teleportY = getXMLFloat(xmlFile, key..".storeTeleportLocation#y");
+			storePlace.teleportZ = getXMLFloat(xmlFile, key..".storeTeleportLocation#z");
+		end;
+		delete(xmlFile);
+	end;
+
+	return StoreDeliveries.isLoaded;
+
+end;
+]]
 
