@@ -18,7 +18,16 @@
             <GuiElement type="bitmap" profile="bottomScrollClipper" name="bottomClipper" />
         
             <GuiElement type="scrollingLayout" profile="ingameMenuSettingsLayout" id="boxLayout" topClipperElementName="topClipper" bottomClipperElementName="bottomClipper">
-                <GuiElement type="text" profile="settingsMenuSubtitle" i18nId="ANIMAL_HELPER_SUBTITLE" text="__Configuration__" />
+                <GuiElement type="text" profile="settingsMenuSubtitle" i18nId="ANIMAL_HELPER_SUBTITLE" text="Configuration" />
+
+                <GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="helperStartHourElement" onCreate="onCreateStartHour">
+					<GuiElement type="button" profile="multiTextOptionSettingsLeft" />
+					<GuiElement type="button" profile="multiTextOptionSettingsRight" />
+					<GuiElement type="text"   profile="multiTextOptionSettingsText" />
+					<GuiElement type="text"   profile="multiTextOptionSettingsTitle" i18nId="ANIMAL_HELPER_START_HOUR" text="startHour"/>
+					<GuiElement type="bitmap" profile="multiTextOptionSettingsBg" />
+					<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" i18nId="ANIMAL_HELPER_START_HOUR_TOOLTIP" text="startHourTooltip"/>
+				</GuiElement>
             </GuiElement>
 
             <GuiElement type="flowLayout" profile="buttonBoxDialog" id="buttonsPC">

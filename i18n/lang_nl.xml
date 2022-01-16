@@ -2,5 +2,6 @@
 <l10n>
     <translationContributors>ParamIT</translationContributors>
     <texts>
+        <text name="ANIMAL_HELPER_SUBTITLE" text="Instellingen" />
     </texts>
 </l10n>
