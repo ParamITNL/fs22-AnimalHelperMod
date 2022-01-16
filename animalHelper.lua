@@ -7,7 +7,8 @@
       - Cleanup Code
       - Make filling straw configurable (Done)
         - Add action or GUI to enable/disable filling of straw
-]] 
+]]
+
 --- AnimalHelper module
 -- @module AnimalHelper
 -- @author ParamIT_NL
@@ -33,19 +34,64 @@ AnimalHelper = {
     isDebug = true,
     fillStraw = true,
     modName = g_currentModName,
+    modDir = g_currentModDirectory,
+    startHour = 9
 }
 
+
+
+
 ---loadMap EventHandler
----@tparam string name
+---@param name string
 function AnimalHelper:loadMap(name)
     AnimalHelper:loadSettings()
     g_messageCenter:subscribe(MessageType.HOUR_CHANGED, self.hourChanged, self);
     Player.registerActionEvents = Utils.appendedFunction(Player.registerActionEvents, self.registerActionEventsPlayer);
     FSBaseMission.saveSavegame = Utils.appendedFunction(FSBaseMission.saveSavegame, self.saveSettings);
+
+    local origTextElementLoadFromXml = TextElement.loadFromXML
+    local origGuiElementLoadFromXml = GuiElement.loadFromXML
+
+    local function loadElement(element, xmlFile, key)
+        if xmlFile == nil then print("Error: XmlFile is nil!") end
+        if element == nil then print ("Error: element is nil") end
+        if key == nil then print ("Error: key is nil") end
+        
+        local id = Utils.getNoNil(getXMLString(xmlFile, key .. "#i18nId"), "")
+
+        if id ~= "" and g_i18n:hasModText(id) and type(element.setText) == "function" then
+            local text = g_i18n.modEnvironments[AnimalHelper.modName].texts[id]
+            element:setText(text)
+            printdbg("Text for %s set to: %s", id, text)
+        end
+    end
+    
+    TextElement.loadFromXML = Utils.appendedFunction(origTextElementLoadFromXml, function(self, xmlFile, key)
+        printdbg("See if we can localize...")
+        local _,_ pcall(loadElement, self, xmlFile, key)
+    end)
+
+    local function loadAnimalHelperMenu()
+        g_gui:loadProfiles(Utils.getFilename("gui/guiProfiles.xml", AnimalHelper.modDir))
+        AnimalHelperSettingsDialog = AnimalHelperSettingsDialog.new()
+        g_gui:loadGui(Utils.getFilename("gui/AnimalHelperSettingsDialog.xml", AnimalHelper.modDir), "AnimalHelperSettingsDialog", AnimalHelperSettingsDialog)
+    end
+
+    local state, result = pcall( loadAnimalHelperMenu )
+    if not ( state ) then 
+        print("Error: Error loading AnimalHelper UI: "..tostring(result))
+    else
+        print("Loaded AnimalHelperUI successfully")
+    end
+
+    TextElement.loadFromXML = origTextElementLoadFromXml
+    GuiElement.loadFromXML = origGuiElementLoadFromXml
 end;
 
---- get the filename of the xml settings are saved to/from
--- @treturn string the filename
+
+
+---Get the filename for the settings xml file
+---@return string filename The requested filename
 local function getSaveFileName()
     local xmlFilePath = g_currentMission.missionInfo.savegameDirectory;
 	if xmlFilePath == nil then
@@ -53,11 +99,12 @@ local function getSaveFileName()
             getUserProfileAppPath(),
             g_currentMission.missionInfo.savegameIndex)
 	end;
-    xmlFilePath = string.format("%s/%s.xml", xmlFilePath, AnimalHelper.modName)
+    xmlFilePath = string.format("%s/%s.xml", xmlFilePath, "animalHelper")
 
     return xmlFilePath
 end
 
+---Load the settings from animalHelper.xml
 function AnimalHelper:loadSettings()
     local xmlFilePath = getSaveFileName()
 
@@ -68,6 +115,7 @@ function AnimalHelper:loadSettings()
             AnimalHelper.enabled = xmlFile:getBool(key..".isEnabled", AnimalHelper.enabled)
             AnimalHelper.isDebug = xmlFile:getBool(key..".isDebug", false)
             AnimalHelper.fillStraw = xmlFile:getBool(key..".fillStraw", AnimalHelper.fillStraw)
+            AnimalHelper.startHour = xmlFile:getInt(key .. ".startHour", AnimalHelper.startHour)
         end
     end
 end
@@ -81,22 +129,32 @@ function AnimalHelper:saveSettings()
     xmlFile:setBool(key..".isEnabled", AnimalHelper.enabled)
     xmlFile:setBool(key..".isDebug", AnimalHelper.isDebug)
     xmlFile:setBool(key..".fillStraw", AnimalHelper.fillStraw)
+    xmlFile:setInt(key .. ".startHour", AnimalHelper.startHour)
     xmlFile:save();
 	xmlFile:delete();
 end
 
+---Extension on the Player.registerActionEvents function
 function AnimalHelper:registerActionEventsPlayer()
     -- @ToDo Change action text when helpers are enabled.
     printdbg("Registering Actions!");
-    local valid, actionEventId, _ = g_inputBinding:registerActionEvent(InputAction.ANIMAL_HELPER_HIRE_HELPER, AnimalHelper,
-        AnimalHelper.actionCallbackPlayer, false, true, false, true);
+    local _, hireActionEventId, _ = g_inputBinding:registerActionEvent(InputAction.ANIMAL_HELPER_HIRE_HELPER, AnimalHelper, AnimalHelper.animalHelperHireCallback, false, true, false, true)
+    g_inputBinding:setActionEventTextPriority(hireActionEventId, GS_PRIO_VERY_LOW);
+    g_inputBinding:setActionEventTextVisibility(hireActionEventId, true);
 
-    g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_VERY_LOW);
-    g_inputBinding:setActionEventTextVisibility(actionEventId, true);
+    local _, optionsEventId, _ = g_inputBinding:registerActionEvent(InputAction.ANIMAL_HELPER_OPTIONS, AnimalHelper, AnimalHelper.animalHelperOptionsCallback, false, true, false, true)
+    g_inputBinding:setActionEventTextPriority(optionsEventId, GS_PRIO_VERY_LOW)
+    g_inputBinding:setActionEventTextVisibility(optionsEventId, true)
 end
 
-function AnimalHelper:actionCallbackPlayer(actionName, keyStatus, arg4, arg5, arg6)
-    if actionName == "ANIMAL_HELPER_HIRE_HELPER" then
+function AnimalHelper:animalHelperOptionsCallback()
+        printdbg("Using the new UI...")
+        g_gui:showDialog( "AnimalHelperSettingsDialog", true)
+end
+
+---ANIMAL_HELPER_HIRE_HELPER action callback
+function AnimalHelper:animalHelperHireCallback()
+    printdbg("Hire Helper Action")
         -- @ToDo: Add action to disable helper, or change text in help-menu
         AnimalHelper.enabled = AnimalHelper.enabled ~= true;
         local message
@@ -107,8 +165,25 @@ function AnimalHelper:actionCallbackPlayer(actionName, keyStatus, arg4, arg5, ar
         end
 
         g_currentMission.hud:addSideNotification(FSBaseMission.INGAME_NOTIFICATION_OK, message, nil, GuiSoundPlayer.SOUND_SAMPLES.TRANSACTION )
+end
+
+function AnimalHelper:toggleStraw() 
+    AnimalHelper.fillStraw = not AnimalHelper.fillStraw;
+end
+
+function AnimalHelper:changeWorkStartTime() 
+end
+
+---Translates boolean to "on"/"off" string representation
+---@param b boolean Boolean value to convert
+---@return string str The converted string
+function AnimalHelper:BooleanToString(b)
+    if (b == true) then
+        return g_i18n:getText("ANIMAL_HELPER_ON_TEXT")
+    else
+        return g_i18n:getText("ANIMAL_HELPER_OFF_TEXT")
     end
-end;
+end
 
 --- hourChanged event handler.
 -- Handles the hourChanged event. If the time is correct and helpers is enabled, the runHelpers method will be invoked.
@@ -151,9 +226,9 @@ function AnimalHelper:runHelpers()
 end;
 
 --- Default Husbandry Helper.
--- @tparam AnimalClusterHusbandry clusterHusbandry The husbandry to run the helper for
--- @tparam integer farmId The farmId of the player
--- @treturn integer The costs calculated for the daily upkeep of the animals
+--- @tparam AnimalClusterHusbandry clusterHusbandry  The husbandry to run the helper for
+--- @tparam integer farmId The farmId of the player
+--- @treturn integer The costs calculated for the daily upkeep of the animals
 function AnimalHelper:doForHusbandry(clusterHusbandry, farmId)
     local currentCosts = 0
     printdbg("Default helper for husbandry " .. clusterHusbandry.animalTypeName);
@@ -172,7 +247,7 @@ end;
 
 --- Fill husbandry water level
 -- @tparam AnimalClusterHusbandry clusterHusbandry The husbandry to fill the water levels for
--- @param farmId The players farmId
+-- @tparam integer farmId The players farmId
 -- @treturn integer The costs calculated for the water. For now, water is free.
 function AnimalHelper:giveWater(clusterHusbandry, farmId) 
     local freeCapacity = clusterHusbandry.placeable:getHusbandryFreeCapacity(FillType.WATER)
@@ -187,9 +262,9 @@ function AnimalHelper:giveWater(clusterHusbandry, farmId)
 end
 
 --- Fill husbandry Straw level
--- @param clusterHusbandry AnimalClusterHusbandry The husbandry to fill the straw levels for
--- @param farmId any The players farmId
--- @return integer costs The costs calculated for the straw.
+-- @tparam AnimalClusterHusbandry clusterHusbandry The husbandry to fill the straw levels for
+-- @tparam integer farmId The players farmId
+-- @treturn integer The costs calculated for the straw.
 function AnimalHelper:giveStraw(clusterHusbandry, farmId) 
     local freeCapacity = clusterHusbandry.placeable:getHusbandryFreeCapacity(FillType.STRAW)
     local strawCosts = 0
@@ -203,9 +278,9 @@ function AnimalHelper:giveStraw(clusterHusbandry, farmId)
 end
 
 --- Feed the animals
--- @param clusterHusbandry AnimalClusterHusbandry The husbandry to feed.
--- @param farmId any The farmId of the players farm
--- @return integer costs The costs calculated for the food
+-- @tparam AnimalClusterHusbandry clusterHusbandry The husbandry to feed.
+-- @tparam integer farmId The farmId of the players farm
+-- @treturn integer The costs calculated for the food
 function AnimalHelper:doFeed(clusterHusbandry, farmId) 
     -- @ToDo: Use food from storage when available.
     -- Take care of food:
@@ -236,8 +311,8 @@ function AnimalHelper:doFeed(clusterHusbandry, farmId)
 end
 
 --- Get the fillTypeIndex for the fillType to use for this foodGroup
--- @param foodGroup any The foodgroup we are filling
--- @return fillTypeIndex we are going to use for this foodgroup.
+-- @tparam any foodGroup The foodgroup we are filling
+-- @treturn integer fillTypeIndex we are going to use for this foodgroup.
 function AnimalHelper:getFillTypeIndexToFill(foodGroup) 
     local storedFillType = {
         fillTypeIndex = 0,
@@ -265,8 +340,8 @@ function AnimalHelper:getFillTypeIndexToFill(foodGroup)
 end;
 
 --- Helper method for horse-husbandries
--- @param husbandry AnimalClusterHusbandry The husbandry to tend to
--- @param farmId any the Players FarmId.
+-- @tparam AnimalClusterHusbandry husbandry The husbandry to tend to
+-- @tparam integer farmId the Players FarmId.
 -- @return integer costs The costs calculatod for taking care of the horses.
 function AnimalHelper:doForHorseHusbandry(husbandry, farmId)
     local currentCosts = self:doForHusbandry(husbandry, farmId)
@@ -289,56 +364,10 @@ end;
 addModEventListener(AnimalHelper);
 
 --- Method that prints (formatted) text only when AnimalHelper.isDebug is true.
--- @param str string inputstring
--- @param ... string format arguments
+-- @tparam string str inputstring
+-- @tparam any ... string format arguments
 function printdbg(str, ...)
     if (AnimalHelper.isDebug == true) then
         print(string.format(str, ...))
     end
 end
-
---[[
-    function StoreDeliveries:saveSettings()
-
-	
-
-end;
-
-function StoreDeliveries:loadSettings()
-
-	local savegameFolderPath = g_currentMission.missionInfo.savegameDirectory;
-	if savegameFolderPath == nil then
-		savegameFolderPath = ('%ssavegame%d'):format(getUserProfileAppPath(), g_currentMission.missionInfo.savegameIndex);
-	end;
-	savegameFolderPath = savegameFolderPath.."/"
-	local key = "storeDeliveries";
-
-	if fileExists(savegameFolderPath.."storeDeliveries.xml") then
-		local xmlFile = loadXMLFile(key, savegameFolderPath.."storeDeliveries.xml");
-		StoreDeliveries.isLoaded = getXMLBool(xmlFile, key.."#isLoaded");
-		if StoreDeliveries.isLoaded then
-			local storePlace = g_currentMission.storeSpawnPlaces[1];
-			storePlace.startX = getXMLFloat(xmlFile, key..".storeLocation#x");
-			storePlace.startY = getXMLFloat(xmlFile, key..".storeLocation#y");
-			storePlace.startZ = getXMLFloat(xmlFile, key..".storeLocation#z");
-			storePlace.rotX = getXMLFloat(xmlFile, key..".storeRotation#x");
-			storePlace.rotY = getXMLFloat(xmlFile, key..".storeRotation#y");
-			storePlace.rotZ = getXMLFloat(xmlFile, key..".storeRotation#z");
-			storePlace.dirX = getXMLFloat(xmlFile, key..".storeDirection#x");
-			storePlace.dirY = getXMLFloat(xmlFile, key..".storeDirection#y");
-			storePlace.dirZ = getXMLFloat(xmlFile, key..".storeDirection#z");
-			storePlace.dirPerpX = getXMLFloat(xmlFile, key..".storePerpDirection#x");
-			storePlace.dirPerpY = getXMLFloat(xmlFile, key..".storePerpDirection#y");
-			storePlace.dirPerpZ = getXMLFloat(xmlFile, key..".storePerpDirection#z");
-			storePlace.teleportX = getXMLFloat(xmlFile, key..".storeTeleportLocation#x");
-			storePlace.teleportY = getXMLFloat(xmlFile, key..".storeTeleportLocation#y");
-			storePlace.teleportZ = getXMLFloat(xmlFile, key..".storeTeleportLocation#z");
-		end;
-		delete(xmlFile);
-	end;
-
-	return StoreDeliveries.isLoaded;
-
-end;
-]]
-

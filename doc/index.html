@@ -61,8 +61,20 @@
 	<td class="summary">loadMap EventHandler</td>
 	</tr>
 	<tr>
+	<td class="name" nowrap><a href="#loadSettings">loadSettings ()</a></td>
+	<td class="summary">Load the settings from animalHelper.xml</td>
+	</tr>
+	<tr>
 	<td class="name" nowrap><a href="#saveSettings">saveSettings ()</a></td>
 	<td class="summary">Save the current settings when saving the game.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#registerActionEventsPlayer">registerActionEventsPlayer ()</a></td>
+	<td class="summary">Extension on the Player.registerActionEvents function</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#actionCallbackPlayer">actionCallbackPlayer (actionName, keyStatus, arg4, arg5, arg6)</a></td>
+	<td class="summary">Action eventhandler</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#hourChanged">hourChanged ()</a></td>
@@ -120,10 +132,23 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">name</span>
-            <span class="types"><span class="type">any</span></span>
-
+         string
         </li>
     </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "loadSettings"></a>
+    <strong>loadSettings ()</strong>
+    </dt>
+    <dd>
+    Load the settings from animalHelper.xml
+
+
 
 
 
@@ -138,6 +163,52 @@
     Save the current settings when saving the game.
 
 
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "registerActionEventsPlayer"></a>
+    <strong>registerActionEventsPlayer ()</strong>
+    </dt>
+    <dd>
+    Extension on the Player.registerActionEvents function
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "actionCallbackPlayer"></a>
+    <strong>actionCallbackPlayer (actionName, keyStatus, arg4, arg5, arg6)</strong>
+    </dt>
+    <dd>
+    Action eventhandler
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">actionName</span>
+         string
+        </li>
+        <li><span class="parameter">keyStatus</span>
+         any
+        </li>
+        <li><span class="parameter">arg4</span>
+         any
+        </li>
+        <li><span class="parameter">arg5</span>
+         any
+        </li>
+        <li><span class="parameter">arg6</span>
+         any
+        </li>
+    </ul>
 
 
 
@@ -189,7 +260,7 @@
     <ul>
         <li><span class="parameter">clusterHusbandry</span>
             <span class="types"><span class="type">AnimalClusterHusbandry</span></span>
-         The husbandry to run the helper for
+          The husbandry to run the helper for
         </li>
         <li><span class="parameter">farmId</span>
             <span class="types"><span class="type">integer</span></span>
@@ -223,6 +294,7 @@
          The husbandry to fill the water levels for
         </li>
         <li><span class="parameter">farmId</span>
+            <span class="types"><span class="type">integer</span></span>
          The players farmId
         </li>
     </ul>
@@ -249,17 +321,20 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">clusterHusbandry</span>
-         AnimalClusterHusbandry The husbandry to fill the straw levels for
+            <span class="types"><span class="type">AnimalClusterHusbandry</span></span>
+         The husbandry to fill the straw levels for
         </li>
         <li><span class="parameter">farmId</span>
-         any The players farmId
+            <span class="types"><span class="type">integer</span></span>
+         The players farmId
         </li>
     </ul>
 
     <h3>Returns:</h3>
     <ol>
 
-        integer costs The costs calculated for the straw.
+           <span class="types"><span class="type">integer</span></span>
+        The costs calculated for the straw.
     </ol>
 
 
@@ -277,17 +352,20 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">clusterHusbandry</span>
-         AnimalClusterHusbandry The husbandry to feed.
+            <span class="types"><span class="type">AnimalClusterHusbandry</span></span>
+         The husbandry to feed.
         </li>
         <li><span class="parameter">farmId</span>
-         any The farmId of the players farm
+            <span class="types"><span class="type">integer</span></span>
+         The farmId of the players farm
         </li>
     </ul>
 
     <h3>Returns:</h3>
     <ol>
 
-        integer costs The costs calculated for the food
+           <span class="types"><span class="type">integer</span></span>
+        The costs calculated for the food
     </ol>
 
 
@@ -305,13 +383,15 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">foodGroup</span>
-         any The foodgroup we are filling
+            <span class="types"><span class="type">any</span></span>
+         The foodgroup we are filling
         </li>
     </ul>
 
     <h3>Returns:</h3>
     <ol>
 
+           <span class="types"><span class="type">integer</span></span>
         fillTypeIndex we are going to use for this foodgroup.
     </ol>
 
@@ -330,10 +410,12 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">husbandry</span>
-         AnimalClusterHusbandry The husbandry to tend to
+            <span class="types"><span class="type">AnimalClusterHusbandry</span></span>
+         The husbandry to tend to
         </li>
         <li><span class="parameter">farmId</span>
-         any the Players FarmId.
+            <span class="types"><span class="type">integer</span></span>
+         the Players FarmId.
         </li>
     </ul>
 
@@ -358,9 +440,11 @@
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">str</span>
-         string inputstring
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         inputstring
         </li>
         <li><span class="parameter">...</span>
+            <span class="types"><span class="type">any</span></span>
          string format arguments
         </li>
     </ul>
@@ -377,7 +461,7 @@
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2022-01-10 13:22:27 </i>
+<i style="float:right;">Last updated 2022-01-10 16:12:45 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>

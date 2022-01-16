@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<!-- TODO! -->
+<l10n>
+    <translationContributors>ParamIT</translationContributors>
+    <texts>
+        <text name="ANIMAL_HELPER_CHOOSE_OPTIONS" text="Select setting" />
+        <text name="ANIMAL_HELPER_TOGGLE_STRAW" text="Toggle topping up of straw" />
+        <text name="ANIMAL_HELPER_CHANGE_WORK_START_TIME" text="Starttime for helpers" />
+        <text name="ANIMAL_HELPER_ON_TEXT" text="On" />
+        <text name="ANIMAL_HELPER_OFF_TEXT" text="Off" />
+        <text name="ahSettingsSubTitle" text="Verzorgers starttijd" />
+    </texts>
+</l10n>

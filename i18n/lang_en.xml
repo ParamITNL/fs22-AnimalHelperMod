@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<l10n>
+    <translationContributors>ParamIT</translationContributors>
+    <texts>
+        <text name="ANIMAL_HELPER_SUBTITLE" text="Configuration" />
+    </texts>
+</l10n>

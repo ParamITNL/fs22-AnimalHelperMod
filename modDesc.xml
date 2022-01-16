@@ -32,8 +32,9 @@ Journal des changements:
     <multiplayer supported="false"/>
     <extraSourceFiles>
         <sourceFile filename="animalHelper.lua" />
+		<sourceFile filename="gui/AnimalHelperSettingsDialog.lua" />
     </extraSourceFiles>
-	<l10n>
+	<l10n filenamePrefix="i18n/lang">
 		<text name="input_ANIMAL_HELPER_HIRE_HELPER">
 			<en>Hire animal helper</en>
 			<nl>Huur dierenverzorgers in</nl>
@@ -75,13 +76,12 @@ Journal des changements:
 		<action name="ANIMAL_HELPER_OPTIONS" category="ONFOOT" locked="false" ignoreComboMask="false" />
     </actions>
     <inputBinding>
-        <actionBinding action="ANIMAL_HELPER_HIRE_HELPER" >
+        <actionBinding action="ANIMAL_HELPER_HIRE_HELPER">
             <binding device="KB_MOUSE_DEFAULT" input="KEY_lalt KEY_lctrl KEY_9" />
             <binding device="GAMEPAD_DEFAULT"  input="BUTTON_5 BUTTON_6 BUTTON_1" axisComponent="+" neutralInput="0" index="1"/>
         </actionBinding>
 		<actionBinding action="ANIMAL_HELPER_OPTIONS">
-			<binding device="KB_MOUSE_DEFAULT" input="KEY_lalt KEU_ctrl KEY_0" />
-			<binding device="GAMEPAD_DEFAULT" input="BUTTON_5 BUTTON_6 BUTTON_2" axisComponent="+" neutralInput="0" index="1" />
+			<binding device="KB_MOUSE_DEFAULT" input="KEY_lalt KEY_lctrl KEY_0" />
 		</actionBinding>
     </inputBinding>
 </modDesc>

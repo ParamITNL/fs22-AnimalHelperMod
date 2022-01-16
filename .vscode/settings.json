@@ -25,7 +25,14 @@
         "fileExists",
         "loadXMLFile",
         "delete",
-        "XMLFile"
+        "XMLFile",
+        "g_gui",
+        "g_currentModDirectory",
+        "DialogElement",
+        "Class",
+        "MathUtil",
+        "TextElement",
+        "GuiElement"
     ],
     "Lua.diagnostics.disable": [
         "empty-block"
