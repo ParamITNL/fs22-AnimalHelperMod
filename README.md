@@ -22,10 +22,10 @@ You can alter some settings to adjust the mod to your desired gameplay wishes. T
 ## History
 Please refer to modDesc.xml for a complete changelog. The following releases are available:
 
-* xx-2018 v1.0 - Initial version
-* 11-2020 v1.1 - Scripts reworked to dynamically determine fillTypes to top up.
-* 11-2020 v1.1.1 - Training of horses has been added.
 * 01-2022 v22.0 - Updated mod to FS22. 
+* 11-2020 v1.1.1 - Training of horses has been added.
+* 11-2020 v1.1 - Scripts reworked to dynamically determine fillTypes to top up.
+* xx-2018 v1.0 - Initial version
 
 ## Roadmap
 
