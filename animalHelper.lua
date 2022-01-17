@@ -38,9 +38,6 @@ AnimalHelper = {
     startHour = 9
 }
 
-
-
-
 ---loadMap EventHandler
 ---@param name string
 function AnimalHelper:loadMap(name)
@@ -49,7 +46,7 @@ function AnimalHelper:loadMap(name)
     Player.registerActionEvents = Utils.appendedFunction(Player.registerActionEvents, self.registerActionEventsPlayer);
     FSBaseMission.saveSavegame = Utils.appendedFunction(FSBaseMission.saveSavegame, self.saveSettings);
 
-    -- local origTextElementLoadFromXml = TextElement.loadFromXML
+    local origTextElementLoadFromXml = TextElement.loadFromXML
     local origGuiElementLoadFromXml = GuiElement.loadFromXML
 
     local function loadElement(element, xmlFile, key)
@@ -67,11 +64,11 @@ function AnimalHelper:loadMap(name)
             print("Warning: id '" .. id .. "' has no translations!")
         end
     end
-    
-    -- TextElement.loadFromXML = Utils.appendedFunction(origTextElementLoadFromXml, function(self, xmlFile, key)
-    --     printdbg("See if we can localize...")
-    --     local _,_ pcall(loadElement, self, xmlFile, key)
-    -- end)
+
+    TextElement.loadFromXML = Utils.appendedFunction(origTextElementLoadFromXml, function(self, xmlFile, key)
+        printdbg("See if we can localize...")
+        local _,_ pcall(loadElement, self, xmlFile, key)
+    end)
     GuiElement.loadFromXML = Utils.appendedFunction(origGuiElementLoadFromXml, function(self, xmlFile, key)
         local _,_ pcall(loadElement, self, xmlFile, key)
     end)
@@ -89,11 +86,9 @@ function AnimalHelper:loadMap(name)
         print("Loaded AnimalHelperUI successfully")
     end
 
-    -- TextElement.loadFromXML = origTextElementLoadFromXml
+    TextElement.loadFromXML = origTextElementLoadFromXml
     GuiElement.loadFromXML = origGuiElementLoadFromXml
 end;
-
-
 
 ---Get the filename for the settings xml file
 ---@return string filename The requested filename

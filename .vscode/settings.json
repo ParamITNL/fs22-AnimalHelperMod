@@ -32,7 +32,8 @@
         "Class",
         "MathUtil",
         "TextElement",
-        "GuiElement"
+        "GuiElement",
+        "getXMLString"
     ],
     "Lua.diagnostics.disable": [
         "empty-block"
