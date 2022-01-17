@@ -2,7 +2,7 @@
 
 This mod allows you to easily fill up all levels for your animal husbandries. I started created this mod, because I found it a lot of effort to initialy fill up the husbandries after purchasing the animals. This is what the FS19 version of this mod does. Nothing less, nothing more. 
 
-The FS22 version of the mod is changed to a more "permanent helper". The helper will tend to your animals daily at a fixed time (9 am). The helper will feed the animals, ride and clean your horses, top up the water and provide straw if needed.
+The FS22 version of the mod is changed to a more "permanent helper". The helper will tend to your animals daily at a fixed time (9 am by default, configurable). The helper will feed the animals, ride and clean your horses, top up the water and provide straw if needed.
 
 ## Costs
 This mod uses the games economy to calculate prices for the food and straw used. Prices for training and cleaning the horses are (for now) fixed.
