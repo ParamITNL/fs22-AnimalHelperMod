@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<GUI onOpen="onOpen" onClose="onClose" onCreate="onCreate">
+    <GuiElement type="empty" profile="newLayer" />
+    <GuiElement type="bitmap" profile="dialogFullscreenBg" />
+    <GuiElement type="bitmap" profile="bgVignette"/>
+    <GuiElement type="bitmap" profile="bgGlowDialog" />
+
+    <GuiElement type="empty" profile="uiInGameMenuFrame">
+        <!-- Page Header -->
+		<GuiElement type="empty" profile="ingameMenuFrameHeaderPanel">
+			<GuiElement type="bitmap" profile="ingameMenuGeneralSettingsHeaderIcon" />
+			<GuiElement type="text" profile="ingameMenuFrameHeaderText" text="Animal Helper"/>
+		</GuiElement>
+
+        <!-- Scorlling Layout settings box -->
+        <GuiElement type="bitmap" profile="mainMenuSettingsBox" id="settingsContainer">
+            <GuiElement type="bitmap" profile="topScrollClipper" name="topClipper" />
+            <GuiElement type="bitmap" profile="bottomScrollClipper" name="bottomClipper" />
+        
+            <GuiElement type="scrollingLayout" profile="ingameMenuSettingsLayout" id="boxLayout" topClipperElementName="topClipper" bottomClipperElementName="bottomClipper">
+                <GuiElement type="text" profile="settingsMenuSubtitle" i18nId="ANIMAL_HELPER_SUBTITLE" text="Configuration" />
+
+                <GuiElement type="multiTextOption" profile="multiTextOptionSettings" id="helperStartHourElement" onCreate="onCreateStartHour">
+					<GuiElement type="button" profile="multiTextOptionSettingsLeft" />
+					<GuiElement type="button" profile="multiTextOptionSettingsRight" />
+					<GuiElement type="text"   profile="multiTextOptionSettingsText" />
+					<GuiElement type="text"   profile="multiTextOptionSettingsTitle" i18nId="ANIMAL_HELPER_START_HOUR" text="startHour"/>
+					<GuiElement type="bitmap" profile="multiTextOptionSettingsBg" />
+					<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" i18nId="ANIMAL_HELPER_START_HOUR_TOOLTIP" text="startHourTooltip"/>
+				</GuiElement>
+
+                <GuiElement type="checkedOption" profile="multiTextOptionSettings" id="animalHelperFillStraw">
+                    <GuiElement type="button" profile="multiTextOptionSettingsLeft" />
+                    <GuiElement type="button" profile="multiTextOptionSettingsRight"/>
+                    <GuiElement type="text"   profile="multiTextOptionSettingsText" />
+                    <GuiElement type="text"   profile="multiTextOptionSettingsTitle" text="Fill Straw" i18nId="ANIMAL_HELPER_FILL_STRAW_TEXT" />
+                    <GuiElement type="bitmap" profile="multiTextOptionSettingsBg" />
+                    <GuiElement type="text"   profile="multiTextOptionSettingsTooltip" i18nId="ANIMAL_HELPER_FILL_STRAW_TOOLTIP" text="startHourTooltip"/>
+                </GuiElement>
+
+                <GuiElement type="checkedOption" profile="multiTextOptionSettings" id="animalHelperIsDebug">
+                    <GuiElement type="button" profile="multiTextOptionSettingsLeft" />
+                    <GuiElement type="button" profile="multiTextOptionSettingsRight"/>
+                    <GuiElement type="text"   profile="multiTextOptionSettingsText" />
+                    <GuiElement type="text"   profile="multiTextOptionSettingsTitle" text="Debug Mode" i18nId="ANIMAL_HELPER_IS_DEBUG_TEXT" />
+                    <GuiElement type="bitmap" profile="multiTextOptionSettingsBg" />
+                    <GuiElement type="text"   profile="multiTextOptionSettingsTooltip" i18nId="ANIMAL_HELPER_IS_DEBUG_TOOLTIP" text="startHourTooltip"/>
+                </GuiElement>
+            </GuiElement>
+
+            <GuiElement type="flowLayout" profile="buttonBoxDialog" id="buttonsPC">
+                <GuiElement type="button" profile="buttonOK" text="$l10n_button_save" onClick="onClickOk" id="saveButton" />
+                <GuiElement type="button" profile="buttonBack" text="$l10n_button_back" onClick="onClickBack" />
+            </GuiElement>
+        </GuiElement>
+    </GuiElement>
+</GUI>

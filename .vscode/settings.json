@@ -19,6 +19,23 @@
         "g_fillTypeManager",
         "GuiSoundPlayer",
         "FillType",
-        "g_sleepManager"
+        "g_sleepManager",
+        "g_storageSystem",
+        "getUserProfileAppPath",
+        "fileExists",
+        "loadXMLFile",
+        "delete",
+        "XMLFile",
+        "g_gui",
+        "g_currentModDirectory",
+        "DialogElement",
+        "Class",
+        "MathUtil",
+        "TextElement",
+        "GuiElement",
+        "getXMLString"
+    ],
+    "Lua.diagnostics.disable": [
+        "empty-block"
     ]
 }

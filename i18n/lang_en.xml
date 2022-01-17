@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<l10n>
+    <translationContributors>ParamIT</translationContributors>
+    <texts>
+        <text name="ANIMAL_HELPER_SUBTITLE" text="Configuration" />
+        <text name="ANIMAL_HELPER_START_HOUR" text="Animal Helper start time" />
+        <text name="ANIMAL_HELPER_START_HOUR_TOOLTIP" text="The helpers will run at this time. Note: The helpers won't run when you are resting" />
+        <text name="ANIMAL_HELPER_FILL_STRAW_TEXT" text="Fill straw in pastures and stables" />
+        <text name="ANIMAL_HELPER_FILL_STRAW_TOOLTIP" text="Determines if the helpers will topup straw in pastures and stables" />
+        <text name="ANIMAL_HELPER_IS_DEBUG_TEXT" text="Debug Mode" />
+        <text name="ANIMAL_HELPER_IS_DEBUG_TOOLTIP" text="When ON, this mod will print more messages and the Helper will run every Hour" />
+    </texts>
+</l10n>

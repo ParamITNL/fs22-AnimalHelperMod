@@ -18,6 +18,12 @@
             "type": "shell",
             "command": "./buildscripts/build.ps1 -nozip $true -startFS $true",
             "group": "build"
+        },
+        {
+            "label": "Create Mod Zip and start game",
+            "type": "shell",
+            "command": "./buildscripts/build.ps1 -startFS $true",
+            "group": "build"
         }
     ]
 }
