@@ -63,13 +63,8 @@ function AnimalHelperSettingsDialog:onClickOk()
 			AnimalHelper.fillStraw = fillStraw
 		end
 	end)
-	
-    -- 	local password = self.passwordElement:getText()
-    -- 	local capacity = self.capacityNumberTable[self.capacityElement:getState()]
-    -- 	local autoAccept = self.autoAcceptElement:getIsChecked()
-    -- 	local allowOnlyFriends = self.allowOnlyFriendsElement:getIsChecked()
-    
+
     self:close()
-    
+
     return false
 end
