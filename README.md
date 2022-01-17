@@ -32,7 +32,7 @@ Please refer to modDesc.xml for a complete changelog. The following releases are
 The following features are planned to be implemented in a feature release:
 
 - [x] Filling the different foodgroups with the different filltypes available, so you can reach a 100% productivity.
-- [ ] #2
+- [ ] [#2](/../../issues/2) - Feed taken from silos
 - [ ] Choose fillType based on the price of the materials. Use the cheapest fillType.
 - [ ] Translation of the different messages/texts. (Help is appreciated)
 - [ ] [#10](/../../issues/10) - Determine filling of straw yes/no by the availability of a Straw Pit
