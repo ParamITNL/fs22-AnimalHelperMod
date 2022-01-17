@@ -23,10 +23,11 @@ A clear and concise description of what you expected to happen.
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
+**Environment (please complete the following information):**
+ - OS: [e.g. Windows 10]
+ - Mod Version [e.g. 22]
+ - Game Version [e.g. 1.2.0.2]
+ - Other mods installed/in use in savegame
 
 **Additional context**
 Add any other context about the problem here.
