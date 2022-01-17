@@ -3,5 +3,11 @@
     <translationContributors>ParamIT</translationContributors>
     <texts>
         <text name="ANIMAL_HELPER_SUBTITLE" text="Instellingen" />
+        <text name="ANIMAL_HELPER_START_HOUR" text="Starttijd" />
+        <text name="ANIMAL_HELPER_START_HOUR_TOOLTIP" text="Starttijd van de verzorgers. Let op, de verzorgers werken niet als je zelf slaapt/rust" />
+        <text name="ANIMAL_HELPER_FILL_STRAW_TEXT" text="Stro bijvullen" />
+        <text name="ANIMAL_HELPER_FILL_STRAW_TOOLTIP" text="Bepaalt of de verzorgers het stro bijvullen in de dierenverblijven" />
+        <text name="ANIMAL_HELPER_IS_DEBUG_TEXT" text="Ontwikkelaars modus" />
+        <text name="ANIMAL_HELPER_IS_DEBUG_TOOLTIP" text="Deze mod schrijft meer berichten in de log en de verzorgers draaien elk uur als deze instelling AAN staat." />
     </texts>
 </l10n>

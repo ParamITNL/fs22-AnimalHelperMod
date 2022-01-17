@@ -28,6 +28,24 @@
 					<GuiElement type="bitmap" profile="multiTextOptionSettingsBg" />
 					<GuiElement type="text"   profile="multiTextOptionSettingsTooltip" i18nId="ANIMAL_HELPER_START_HOUR_TOOLTIP" text="startHourTooltip"/>
 				</GuiElement>
+
+                <GuiElement type="checkedOption" profile="multiTextOptionSettings" id="animalHelperFillStraw">
+                    <GuiElement type="button" profile="multiTextOptionSettingsLeft" />
+                    <GuiElement type="button" profile="multiTextOptionSettingsRight"/>
+                    <GuiElement type="text"   profile="multiTextOptionSettingsText" />
+                    <GuiElement type="text"   profile="multiTextOptionSettingsTitle" text="Fill Straw" i18nId="ANIMAL_HELPER_FILL_STRAW_TEXT" />
+                    <GuiElement type="bitmap" profile="multiTextOptionSettingsBg" />
+                    <GuiElement type="text"   profile="multiTextOptionSettingsTooltip" i18nId="ANIMAL_HELPER_FILL_STRAW_TOOLTIP" text="startHourTooltip"/>
+                </GuiElement>
+
+                <GuiElement type="checkedOption" profile="multiTextOptionSettings" id="animalHelperIsDebug">
+                    <GuiElement type="button" profile="multiTextOptionSettingsLeft" />
+                    <GuiElement type="button" profile="multiTextOptionSettingsRight"/>
+                    <GuiElement type="text"   profile="multiTextOptionSettingsText" />
+                    <GuiElement type="text"   profile="multiTextOptionSettingsTitle" text="Debug Mode" i18nId="ANIMAL_HELPER_IS_DEBUG_TEXT" />
+                    <GuiElement type="bitmap" profile="multiTextOptionSettingsBg" />
+                    <GuiElement type="text"   profile="multiTextOptionSettingsTooltip" i18nId="ANIMAL_HELPER_IS_DEBUG_TOOLTIP" text="startHourTooltip"/>
+                </GuiElement>
             </GuiElement>
 
             <GuiElement type="flowLayout" profile="buttonBoxDialog" id="buttonsPC">

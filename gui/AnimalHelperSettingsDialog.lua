@@ -4,15 +4,19 @@ local AnimalHelperSettingsDialog_mt = Class(AnimalHelperSettingsDialog, DialogEl
 AnimalHelperSettingsDialog.CONTROLS = {
     SAVE_BUTTON = "okButton",
 	BACK_BUTTON = "backButton",
-	START_HOUR = "helperStartHourElement"
+	START_HOUR = "helperStartHourElement",
+	FILL_STRAW = "animalHelperFillStraw",
+	IS_DEBUG = "animalHelperIsDebug"
 }
 
 function AnimalHelperSettingsDialog.new(target, customMt, l10n)
     local self = DialogElement.new(target, customMt or AnimalHelperSettingsDialog_mt)
 	self.l10n = l10n
 	self.workerStartHours = {}
+	self.workerStartHoursNum = {}
 	for i = 8, 23, 1 do
 		table.insert(self.workerStartHours, string.format("%02d:00", i))
+		table.insert(self.workerStartHoursNum, i)
 	end
 
     self:registerControls(AnimalHelperSettingsDialog.CONTROLS)
@@ -32,27 +36,8 @@ function AnimalHelperSettingsDialog:onOpen()
 	end
 
 	self.helperStartHourElement:setState(workHour)
-
-	-- local dynInfo = g_currentMission.missionDynamicInfo
-	-- local numPlayers = dynInfo.capacity
-	-- local capacityState = g_serverMinCapacity
-
-	-- for i = 1, table.getn(self.capacityNumberTable) do
-	-- 	if numPlayers == self.capacityNumberTable[i] then
-	-- 		capacityState = i
-
-	-- 		break
-	-- 	end
-	-- end
--- 	self.capacityElement:setState(capacityState)
--- 	self.serverNameElement:setVisible(not g_currentMission.connectedToDedicatedServer)
--- 	self.autoAcceptElement:setVisible(not g_currentMission.connectedToDedicatedServer)
--- 	self.capacityElement:setVisible(not g_currentMission.connectedToDedicatedServer)
--- 	self.serverNameElement:setText(dynInfo.serverName)
--- 	self.passwordElement:setText(dynInfo.password)
--- 	self.autoAcceptElement:setIsChecked(dynInfo.autoAccept)
--- 	self.allowOnlyFriendsElement:setIsChecked(dynInfo.allowOnlyFriends)
--- 	self.boxLayout:invalidateLayout()
+	self.animalHelperFillStraw:setIsChecked(AnimalHelper.fillStraw)
+	self.animalHelperIsDebug:setIsChecked(AnimalHelper.isDebug)
 end
 
 function AnimalHelperSettingsDialog:onCreateStartHour(element)
@@ -61,10 +46,24 @@ function AnimalHelperSettingsDialog:onCreateStartHour(element)
 end
 
 function AnimalHelperSettingsDialog:onClickOk()
-	print("OK CLICKED")
-	local workerStartHour = self.helperStartHourElement:getState()
+	local _,_ = pcall(function()
+		printdbg("OK CLICKED")
+		local workerStartHour = self.helperStartHourElement:getState()
 
-	printdbg("Worker Start Hour '%s'", workerStartHour)
+		printdbg("Worker Start Hour '%s'", workerStartHour)
+		AnimalHelper.startHour = self.workerStartHoursNum[workerStartHour]
+
+		local isDebug = self.animalHelperIsDebug:getIsChecked()
+		if isDebug ~= nil then
+			AnimalHelper.isDebug = isDebug
+		end
+
+		local fillStraw = self.animalHelperFillStraw:getIsChecked()
+		if fillStraw ~= nil then
+			AnimalHelper.fillStraw = fillStraw
+		end
+	end)
+	
     -- 	local password = self.passwordElement:getText()
     -- 	local capacity = self.capacityNumberTable[self.capacityElement:getState()]
     -- 	local autoAccept = self.autoAcceptElement:getIsChecked()
