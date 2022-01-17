@@ -31,12 +31,11 @@ Please refer to modDesc.xml for a complete changelog. The following releases are
 
 The following features are planned to be implemented in a feature release:
 
-1. Filling the different foodgroups with the different filltypes available, so you can reach a 100% productivity.
-    1. Use the FillTypes available in your storage first to feed the animals. If no food is available, it will be bought.
-    2. I will try to choose the filltype based on the price of the materials. The cheapest FillType will be the one used to fill the group.
-2. Translation of the different messages/texts. (Help is appreciated)
-3. By request: I'll try to use materials stored in your silos. If the food is available in the Silo, no costs will be calculated.
-4. [#10](/../../issues/10) - Determine filling of straw yes/no by the availability of a Straw Pit
+- [x] Filling the different foodgroups with the different filltypes available, so you can reach a 100% productivity.
+- [ ] #2
+- [ ] Choose fillType based on the price of the materials. Use the cheapest fillType.
+- [ ] Translation of the different messages/texts. (Help is appreciated)
+- [ ] [#10](/../../issues/10) - Determine filling of straw yes/no by the availability of a Straw Pit
 
 ## Untested
 I still have to test the mod. I cannot guarantee it will work errorfree. I played a bit with it for now, with only a few basic husbandries and it seems to work. But, as mentioned before, no guarantee can or wil be given this mod works correct. I hope to be able to test it some more soon.
