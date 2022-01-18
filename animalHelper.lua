@@ -20,6 +20,8 @@ if (AnimalHelper ~= nil) then
     AnimalHelper:removeModEventListener(AnimalHelper);
 end
 
+local directory = g_currentModDirectory
+
 AnimalHelper = {
     helpers = {
         ["HORSE"] = function(husbandry, farmId)
@@ -34,7 +36,7 @@ AnimalHelper = {
     isDebug = true,
     fillStraw = true,
     modName = g_currentModName,
-    modDir = g_currentModDirectory,
+    modDir = directory,
     startHour = 9
 }
 
@@ -74,7 +76,8 @@ function AnimalHelper:loadMap(name)
     end)
 
     local function loadAnimalHelperMenu()
-        g_gui:loadProfiles(Utils.getFilename("gui/guiProfiles.xml", AnimalHelper.modDir))
+        -- g_gui:loadProfiles(Utils.getFilename("gui/guiProfiles.xml", self.vcaDirectory))
+        g_gui:loadProfiles(Utils.getFilename("gui/guiProfiles.xml", self.modDir))
         AnimalHelperSettingsDialog = AnimalHelperSettingsDialog.new()
         g_gui:loadGui(Utils.getFilename("gui/AnimalHelperSettingsDialog.xml", AnimalHelper.modDir), "AnimalHelperSettingsDialog", AnimalHelperSettingsDialog)
     end
@@ -171,9 +174,6 @@ function AnimalHelper:toggleStraw()
     AnimalHelper.fillStraw = not AnimalHelper.fillStraw;
 end
 
-function AnimalHelper:changeWorkStartTime() 
-end
-
 ---Translates boolean to "on"/"off" string representation
 ---@param b boolean Boolean value to convert
 ---@return string str The converted string
@@ -190,7 +190,7 @@ end
 -- @see AnimalHelper:runHelpers
 function AnimalHelper:hourChanged()
     printdbg("Checking if helper is enabled...");
-    local isTime = g_currentMission.environment.currentHour == 9 or AnimalHelper.isDebug
+    local isTime = g_currentMission.environment.currentHour == AnimalHelper.startHour or AnimalHelper.isDebug
     local isSleeping = g_sleepManager:getIsSleeping()
     if (AnimalHelper.enabled and isTime and not isSleeping) then
         AnimalHelper:runHelpers();
