@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<l10n>
+    <translationContributors>Vanquish081</translationContributors>
+    <texts>
+        <text name="ANIMAL_HELPER_SUBTITLE" text="Configuración" />
+        <text name="ANIMAL_HELPER_START_HOUR" text="Hora de Inicio para Animal Helper" />
+        <text name="ANIMAL_HELPER_START_HOUR_TOOLTIP" text="Los ayudantes empezarán a su trabajo a esta hora. Nota: los ayudantes no trabajaran cuando estés descansando." />
+        <text name="ANIMAL_HELPER_FILL_STRAW_TEXT" text="Recargar paja en pastos y establos" />
+        <text name="ANIMAL_HELPER_FILL_STRAW_TOOLTIP" text="Ajusta si los ayudantes recargarán paja en pastos y establos" />
+        <text name="ANIMAL_HELPER_IS_DEBUG_TEXT" text="Debug Mode" />
+        <text name="ANIMAL_HELPER_IS_DEBUG_TOOLTIP" text="Cuando esté activado, este mod mostrará más mensajes y el ayudante se ejecutará cada hora." />
+    </texts>
+</l10n>
