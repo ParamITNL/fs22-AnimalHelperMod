@@ -33,7 +33,10 @@ function AnimalHelper:loadMap(name)
 
     AnimalHelper:appendGameFunctions();
     AnimalHelper:initConsoleCommands();
+    AnimalHelper:loadDialogs();
+end;
 
+function AnimalHelper:loadDialogs()
     local origTextElementLoadFromXml = TextElement.loadFromXML
     local origGuiElementLoadFromXml = GuiElement.loadFromXML
 
@@ -72,7 +75,7 @@ function AnimalHelper:loadMap(name)
 
     TextElement.loadFromXML = origTextElementLoadFromXml
     GuiElement.loadFromXML = origGuiElementLoadFromXml
-end;
+end
 
 ---Appends the base game functions with own extensions
 function AnimalHelper:appendGameFunctions()
@@ -152,7 +155,7 @@ function AnimalHelper:registerActionEventsPlayer()
 end
 
 function AnimalHelper:animalHelperOptionsCallback()
-        g_gui:showDialog( "AnimalHelperSettingsDialog", true)
+    g_gui:showDialog( "AnimalHelperSettingsDialog", true)
 end
 
 ---ANIMAL_HELPER_HIRE_HELPER action callback
@@ -168,10 +171,6 @@ function AnimalHelper:animalHelperHireCallback()
     g_currentMission.hud:addSideNotification(FSBaseMission.INGAME_NOTIFICATION_OK, message, nil, GuiSoundPlayer.SOUND_SAMPLES.TRANSACTION )
 end
 
-function AnimalHelper:toggleStraw()
-    AnimalHelper.fillStraw = not AnimalHelper.fillStraw;
-end
-
 ---Translates boolean to "on"/"off" string representation
 ---@param b boolean Boolean value to convert
 ---@return string str The converted string
@@ -183,9 +182,9 @@ function AnimalHelper:BooleanToString(b)
     end
 end
 
---- hourChanged event handler.
--- Handles the hourChanged event. If the time is correct and helpers is enabled, the runHelpers method will be invoked.
--- @see AnimalHelper:runHelpers
+---hourChanged event handler.
+---Handles the hourChanged event. If the time is correct and helpers is enabled, the runHelpers method will be invoked.
+---@see AnimalHelper:runHelpers
 function AnimalHelper:hourChanged()
     local isTime = g_currentMission.environment.currentHour == AnimalHelper.startHour or AnimalHelper.isDebug
     local isSleeping = g_sleepManager:getIsSleeping()
@@ -213,18 +212,22 @@ end
 function AnimalHelper:runHelpers()
     g_currentMission.hud:addSideNotification(FSBaseMission.INGAME_NOTIFICATION_OK, string.format("%s", g_i18n.modEnvironments[AnimalHelper.modName].texts.ANIMAL_HELPER_STARTED))
     for _,clusterHusbandry in pairs(g_currentMission.husbandrySystem.clusterHusbandries) do
+        -- Check if it is owned by the players farm
+        if not AnimalHelper.isOwnedByPlayerFarm(clusterHusbandry, g_currentMission.player.farmId) then
 
-        -- Get Helper for Current Husbandry:
-        local helper = Utils.getNoNil(AnimalHelper.helpers[clusterHusbandry.animalTypeName], AnimalHelper.helpers.DEFAULT);
+        else
+            -- Get Helper for Current Husbandry:
+            local helper = Utils.getNoNil(AnimalHelper.helpers[clusterHusbandry.animalTypeName], AnimalHelper.helpers.DEFAULT);
 
-        -- If we have a helper, run it. We should have one, because we should fallback to the default helper.
-        if (helper ~= nil) then
-            local farmId = g_currentMission.player.farmId;
-            local costs = helper(clusterHusbandry, farmId);
+            -- If we have a helper, run it. We should have one, because we should fallback to the default helper.
+            if (helper ~= nil) then
+                local farmId = g_currentMission.player.farmId;
+                local costs = helper(clusterHusbandry, farmId);
 
-            -- If helper reported costs, deduct them from the bank-account
-            if (costs ~= nil) then
-                g_currentMission:addMoney(-costs, farmId, MoneyType.ANIMAL_UPKEEP, true, true)
+                -- If helper reported costs, deduct them from the bank-account
+                if (costs ~= nil) then
+                    g_currentMission:addMoney(-costs, farmId, MoneyType.ANIMAL_UPKEEP, true, true)
+                end
             end
         end
     end
@@ -233,6 +236,17 @@ function AnimalHelper:runHelpers()
     -- @ToDo: Don't notify when sleeping!
     g_currentMission.hud:addSideNotification(FSBaseMission.INGAME_NOTIFICATION_OK, string.format("%s", g_i18n.modEnvironments[AnimalHelper.modName].texts.ANIMAL_HELPER_DONE))
 end;
+
+function AnimalHelper.isOwnedByPlayerFarm(clusterHusbandry, playerFarmId)
+    local husbandry = clusterHusbandry.placeable
+    if husbandry ~= nil then
+        isOwned = husbandry:getOwnerFarmId() == playerFarmId
+        return isOwned
+    else
+        printDbg("WARNING: Husbandry is NIL, cannot determine if is owned by player, returning true.")
+        return true
+    end
+end
 
 --- Default Husbandry Helper.
 --- @tparam AnimalClusterHusbandry clusterHusbandry  The husbandry to run the helper for
@@ -299,7 +313,12 @@ function AnimalHelper:doFeed(clusterHusbandry, farmId)
     -- Fill Each FoodGroup
     for idx,foodGroup in pairs(animalFood.groups) do
         -- Get fillLevels available in storage for foodgroup:
+        if not AnimalHelper.buyProducts then
+            printDbg("We're not buying it! Check storage!")
+            local foodInStorages = AnimalHelper:getFoodAvailableInStorages(foodGroup)
 
+            -- We'll first try to fill from the storage(s)
+        end
 
         local fillTypeIndex = AnimalHelper:getFillTypeIndexToFill(foodGroup)
         freeCapacity = freeCapacity or clusterHusbandry.placeable:getFreeFoodCapacity(fillTypeIndex)
@@ -321,21 +340,51 @@ function AnimalHelper:doFeed(clusterHusbandry, farmId)
 end
 
 function AnimalHelper:getFoodAvailableInStorages(foodGroup)
-    local storedFillTypes = {};
+    local storedFillTypes = {}
 
-    for _,fillType in pairs(foodGroup.fillTypes) do
-        local fillTypeName = g_fillTypeManager:getFillTypeNameByIndex(fillType);
-        printDbg("Checking storages for fillType: %s", fillTypeName);
-        for _,storage in pairs(g_currentMission.storageSystem:getStorages()) do
-            local fillLevel = storage.fillLevels[fillType] or 0;
-            if fillLevel > 0 then
-                printDbg("Fillevel for %s is %d", fillTypeName, fillLevel);
-                local s = StorageFillLevel.new(fillType, fillLevel, storage);
-                storedFillTypes.insert(table.getn(storedFillTypes) + 1, s);
-            end;
-        end;
-    end;
-end;
+    for _,fillTypeIndex in pairs(foodGroup.fillTypes) do
+        local fillTypeName = g_fillTypeManager:getFillTypeNameByIndex(fillTypeIndex)
+        printDbg("Checking storages for fillType '%s'", fillTypeName)
+        local storageFillLevel = AnimalHelper:getFillLevelFromStorages(fillTypeIndex)
+    end
+    --for _,fillType in pairs(foodGroup.fillTypes) do
+    --    local fillTypeName = g_fillTypeManager:getFillTypeNameByIndex(fillType)
+    --
+    --    printDbg("Checking storages for fillType: %s", fillTypeName);
+    --    for _,storage in pairs(g_currentMission.storageSystem:getStorages()) do
+
+    --        if storage:getOwnerFarmId() == farmId and storage.foreignSilo ~= true and storage:getIsFillTypeSupported(fillType.index) then
+    --            local fillLevel = storage.fillLevels[fillType] or 0;
+    --            printDbg("Found fillLevel %d in storage '%s'", fillLevel, type(storage))
+    --
+    --            if fillLevel > 0 then
+    --                local storageFillLevel = StorageFillLevel.new(fillType, fillLevel, storage)
+    --                storageFillLevel:printInfo() --@todo: remove after debug phase
+    --                storedFillTypes.insert(table.getn(storedFillTypes) + 1, storageFillLevel)
+    --            end
+    --        end
+    --    end
+    --end
+
+    return storedFillTypes;
+end
+
+function AnimalHelper:getFillLevelFromStorages(fillTypeIndex)
+    local farmId = g_currentMission:getFarmId()
+    local storages = {}
+    for _,storage in pairs(g_currentMission.storageSystem:getStorages()) do
+        if storage:getOwnerFarmId() == farmId and storage.foreignSilo ~= true and storage:getIsFillTypeSupported(fillTypeIndex) then
+            local fillLevel = storage:getFillLevel(fillTypeIndex) or 0
+            printDbg("Storage %d supports fillTypeIndex '%s' and has fillLevel %d", storage.id, fillTypeIndex, fillLevel)
+            if storages[fillTypeIndex] ~= nil then
+                table.insert(storages[fillTypeIndex], storage)
+            else
+                storages[fillTypeIndex] = {}
+                table.insert(storages[fillTypeIndex], storage)
+            end
+        end
+    end
+end
 
 --- Get the fillTypeIndex for the fillType to use for this foodGroup
 -- @tparam any foodGroup The foodgroup we are filling
@@ -389,4 +438,4 @@ function printDbg(str, ...)
     end
 end
 
-print("Loaded AnimalHelperUI successfully");
+printDbg("Loaded AnimalHelper.lua")
