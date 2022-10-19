@@ -31,7 +31,8 @@ if ($nozip -eq $true) {
   }
 
   Write-Output "Creating zip-file $($destinationZip)"
-  Compress-Archive -Path $sourcePath -Force -CompressionLevel Optimal -DestinationPath "$($destinationZip)"
+  7z a "$($destinationZip)" *.lua *.xml *.dds gui\*.xml gui\*.lua i18n\*.xml
+  # Compress-Archive -Path $sourcePath -Force -CompressionLevel Fastest -DestinationPath "$($destinationZip)"
 }
 
 if ($startFS -eq $true) {

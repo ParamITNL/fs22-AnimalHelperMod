@@ -1,39 +1,40 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="61">
-    <author>ParamIT</author>
-    <version>22.0</version>
+	<author>ParamIT</author>
+	<version>22.0</version>
 	<title>
 		<en>Animal Helper</en>
 		<fr>Ouvrier pour les animaux</fr>
 	</title>
-    <description>
-        <en><![CDATA[Easily make your animals happy by filling up all their needs (Food, water, straw, horse riding)
+	<description>
+		<en><![CDATA[Easily make your animals happy by filling up all their needs (Food, water, straw, horse riding)
 Pending features:
 - Use food from own storage if available. Otherwise buy.
 
 Changelog:
-- v22.0 
+- v22.0
 	* Converted mod to FS22
 	* French translations added by Lactic68
 	* Made filling straw optional
 	* Now loading and saving helper-state
 ]]>
-        </en>
-        <fr><![CDATA[Répondre automatiquement aux besoins de vos animaux (Nourriture, eau, paillage, gestion des chevaux)
+		</en>
+		<fr><![CDATA[Répondre automatiquement aux besoins de vos animaux (Nourriture, eau, paillage, gestion des chevaux)
 Fonctionnalités en cours de développement :
 - Utilisation de la nourriture depuis vos propres silos de stockage ou sinon achat auprès du point de vente le moins cher.
 
 Journal des changements:
 - v22.0 Mod converti pour FS22
 ]]>
-        </fr>
-    </description>
-    <iconFilename>happyAnimals.dds</iconFilename>
-    <multiplayer supported="false"/>
-    <extraSourceFiles>
-        <sourceFile filename="animalHelper.lua" />
+		</fr>
+	</description>
+	<iconFilename>happyAnimals.dds</iconFilename>
+	<multiplayer supported="false"/>
+	<extraSourceFiles>
 		<sourceFile filename="gui/AnimalHelperSettingsDialog.lua" />
-    </extraSourceFiles>
+        <sourceFile filename="storageFillLevels.lua" />
+		<sourceFile filename="animalHelper.lua" />
+	</extraSourceFiles>
 	<l10n filenamePrefix="i18n/lang">
 		<text name="input_ANIMAL_HELPER_HIRE_HELPER">
 			<en>Hire animal helper</en>
@@ -45,7 +46,7 @@ Journal des changements:
 			<nl>Dierenverzorger instellingen</nl>
 			<fr>Configuration de l'aide aux animaux</fr>
 		</text>
-        <text name="ANIMAL_HELPER_UNREGISTERED">
+		<text name="ANIMAL_HELPER_UNREGISTERED">
 			<en>AnimalHelper unregistered its eventlisteners.</en>
 			<nl>AnimalHelper eventlisteners verwijderd.</nl>
 			<fr>L'ouvrier des animaux ne s'est pas présenté aux tâches.</fr>
@@ -71,17 +72,17 @@ Journal des changements:
 			<fr>Ouvrier des animaux desactivé</fr>
 		</text>
 	</l10n>
-    <actions>
-        <action name="ANIMAL_HELPER_HIRE_HELPER" category="ONFOOT" locked="false" ignoreComboMask="false" />
+	<actions>
+		<action name="ANIMAL_HELPER_HIRE_HELPER" category="ONFOOT" locked="false" ignoreComboMask="false" />
 		<action name="ANIMAL_HELPER_OPTIONS" category="ONFOOT" locked="false" ignoreComboMask="false" />
-    </actions>
-    <inputBinding>
-        <actionBinding action="ANIMAL_HELPER_HIRE_HELPER">
-            <binding device="KB_MOUSE_DEFAULT" input="KEY_lalt KEY_lctrl KEY_9" />
-            <binding device="GAMEPAD_DEFAULT"  input="BUTTON_5 BUTTON_6 BUTTON_1" axisComponent="+" neutralInput="0" index="1"/>
-        </actionBinding>
+	</actions>
+	<inputBinding>
+		<actionBinding action="ANIMAL_HELPER_HIRE_HELPER">
+			<binding device="KB_MOUSE_DEFAULT" input="KEY_lalt KEY_lctrl KEY_9" />
+			<binding device="GAMEPAD_DEFAULT" input="BUTTON_5 BUTTON_6 BUTTON_1" axisComponent="+" neutralInput="0" index="1"/>
+		</actionBinding>
 		<actionBinding action="ANIMAL_HELPER_OPTIONS">
 			<binding device="KB_MOUSE_DEFAULT" input="KEY_lalt KEY_lctrl KEY_0" />
 		</actionBinding>
-    </inputBinding>
+	</inputBinding>
 </modDesc>

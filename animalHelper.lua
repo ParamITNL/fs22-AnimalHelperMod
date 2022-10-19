@@ -1,14 +1,3 @@
---[[ 
-    Animal Helper 22
-    Author:     ParamIT
-    Version:    22
-    ToDo:
-      - Use food/straw from storage when available
-      - Cleanup Code
-      - Make filling straw configurable (Done)
-        - Add action or GUI to enable/disable filling of straw
-]]
-
 --- AnimalHelper module
 -- @module AnimalHelper
 -- @author ParamIT_NL
@@ -16,8 +5,7 @@
 -- @license MIT
 if (AnimalHelper ~= nil) then
     printdbg("AnimalHelper already exists, unregistering...");
-    g_currentMission.hud:addSideNotification(FSBaseMission.INGAME_NOTIFICATION_OK, string.format("%s", g_i18n.modEnvironments[AnimalHelper.modName].texts.ANIMAL_HELPER_UNREGISTERED))
-    AnimalHelper:removeModEventListener(AnimalHelper);
+    removeModEventListener(AnimalHelper);
 end
 
 local directory = g_currentModDirectory
@@ -35,7 +23,7 @@ AnimalHelper = {
     enabled = false,
     isDebug = true,
     fillStraw = true,
-    modName = g_currentModName,
+    modName = g_currentModName or "animalHelper",
     modDir = directory,
     startHour = 9
 }
@@ -55,7 +43,7 @@ function AnimalHelper:loadMap(name)
         if xmlFile == nil then print("Error: XmlFile is nil!") end
         if element == nil then print ("Error: element is nil") end
         if key == nil then print ("Error: key is nil") end
-        
+
         local id = Utils.getNoNil(getXMLString(xmlFile, key .. "#i18nId"), "")
 
         if id ~= "" and g_i18n:hasModText(id) and type(element.setText) == "function" then
@@ -83,7 +71,7 @@ function AnimalHelper:loadMap(name)
     end
 
     local state, result = pcall( loadAnimalHelperMenu )
-    if not ( state ) then 
+    if not ( state ) then
         print("Error: Error loading AnimalHelper UI: "..tostring(result))
     else
         print("Loaded AnimalHelperUI successfully")
@@ -158,19 +146,19 @@ end
 ---ANIMAL_HELPER_HIRE_HELPER action callback
 function AnimalHelper:animalHelperHireCallback()
     printdbg("Hire Helper Action")
-        -- @ToDo: Add action to disable helper, or change text in help-menu
-        AnimalHelper.enabled = AnimalHelper.enabled ~= true;
-        local message
-        if (AnimalHelper.enabled) then
-            message = g_i18n.modEnvironments[AnimalHelper.modName].texts.ANIMAL_HELPER_ENABLED
-        else
-            message = g_i18n.modEnvironments[AnimalHelper.modName].texts.ANIMAL_HELPER_DISABLED
-        end
+    -- @ToDo: Add action to disable helper, or change text in help-menu
+    AnimalHelper.enabled = AnimalHelper.enabled ~= true;
+    local message
+    if (AnimalHelper.enabled) then
+        message = g_i18n.modEnvironments[AnimalHelper.modName].texts.ANIMAL_HELPER_ENABLED
+    else
+        message = g_i18n.modEnvironments[AnimalHelper.modName].texts.ANIMAL_HELPER_DISABLED
+    end
 
-        g_currentMission.hud:addSideNotification(FSBaseMission.INGAME_NOTIFICATION_OK, message, nil, GuiSoundPlayer.SOUND_SAMPLES.TRANSACTION )
+    g_currentMission.hud:addSideNotification(FSBaseMission.INGAME_NOTIFICATION_OK, message, nil, GuiSoundPlayer.SOUND_SAMPLES.TRANSACTION )
 end
 
-function AnimalHelper:toggleStraw() 
+function AnimalHelper:toggleStraw()
     AnimalHelper.fillStraw = not AnimalHelper.fillStraw;
 end
 
@@ -190,18 +178,25 @@ end
 -- @see AnimalHelper:runHelpers
 function AnimalHelper:hourChanged()
     printdbg("Checking if helper is enabled...");
+    printdbg("Is this loaded?");
     local isTime = g_currentMission.environment.currentHour == AnimalHelper.startHour or AnimalHelper.isDebug
     local isSleeping = g_sleepManager:getIsSleeping()
     if (AnimalHelper.enabled and isTime and not isSleeping) then
+        printdbg("Helpers enabled, trying to run them...");
         AnimalHelper:runHelpers();
+    else
+        printdbg("Helpers not enabled, skipping this time...");
     end
 end;
 
--- Add a consolecommand to manually run the helpers if AnimalHelper:isDebug is true:
-if(AnimalHelper.isDebug) then addConsoleCommand("ahRunHelpers", "Hire animal helpers now", "runHelpers", AnimalHelper) end
+-- Add a consolecommand to manually run the helpers if AnimalHelper.isDebug is true:
+if(AnimalHelper.isDebug) then
+    removeConsoleCommand("ahRunHelpers");
+    addConsoleCommand("ahRunHelpers", "Hire animal helpers now", "runHelpers", AnimalHelper)
+end
 
 --- Run the hired helpers for all husbandries.
-function AnimalHelper:runHelpers() 
+function AnimalHelper:runHelpers()
     g_currentMission.hud:addSideNotification(FSBaseMission.INGAME_NOTIFICATION_OK, string.format("%s", g_i18n.modEnvironments[AnimalHelper.modName].texts.ANIMAL_HELPER_STARTED))
     for _,clusterHusbandry in pairs(g_currentMission.husbandrySystem.clusterHusbandries) do
 
@@ -249,7 +244,7 @@ end;
 -- @tparam AnimalClusterHusbandry clusterHusbandry The husbandry to fill the water levels for
 -- @tparam integer farmId The players farmId
 -- @treturn integer The costs calculated for the water. For now, water is free.
-function AnimalHelper:giveWater(clusterHusbandry, farmId) 
+function AnimalHelper:giveWater(clusterHusbandry, farmId)
     local freeCapacity = clusterHusbandry.placeable:getHusbandryFreeCapacity(FillType.WATER)
     printdbg("Free capacity for water = %d l", freeCapacity)
 
@@ -265,7 +260,7 @@ end
 -- @tparam AnimalClusterHusbandry clusterHusbandry The husbandry to fill the straw levels for
 -- @tparam integer farmId The players farmId
 -- @treturn integer The costs calculated for the straw.
-function AnimalHelper:giveStraw(clusterHusbandry, farmId) 
+function AnimalHelper:giveStraw(clusterHusbandry, farmId)
     local freeCapacity = clusterHusbandry.placeable:getHusbandryFreeCapacity(FillType.STRAW)
     local strawCosts = 0
 
@@ -281,16 +276,19 @@ end
 -- @tparam AnimalClusterHusbandry clusterHusbandry The husbandry to feed.
 -- @tparam integer farmId The farmId of the players farm
 -- @treturn integer The costs calculated for the food
-function AnimalHelper:doFeed(clusterHusbandry, farmId) 
+function AnimalHelper:doFeed(clusterHusbandry, farmId)
     -- @ToDo: Use food from storage when available.
     -- Take care of food:
     local animalTypeIndex = clusterHusbandry.animalSystem:getTypeIndexByName(clusterHusbandry.animalTypeName)
     local animalFood = g_currentMission.animalFoodSystem:getAnimalFood(animalTypeIndex)
     local freeCapacity = nil
     local foodCosts = 0
-    
+
     -- Fill Each FoodGroup
     for idx,foodGroup in pairs(animalFood.groups) do
+        -- Get fillLevels available in storage for foodgroup:
+
+
         local fillTypeIndex = AnimalHelper:getFillTypeIndexToFill(foodGroup)
         freeCapacity = freeCapacity or clusterHusbandry.placeable:getFreeFoodCapacity(fillTypeIndex)
 
@@ -310,25 +308,32 @@ function AnimalHelper:doFeed(clusterHusbandry, farmId)
     return foodCosts
 end
 
+function AnimalHelper:getFoodAvailableInStorages(foodGroup)
+    local storedFillTypes = {};
+
+    for _,fillType in pairs(foodGroup.fillTypes) do
+        local fillTypeName = g_fillTypeManager:getFillTypeNameByIndex(fillType);
+        printdbg("Checking storages for fillType: %s", fillTypeName);
+        for _,storage in pairs(g_currentMission.storageSystem:getStorages()) do
+            local fillLevel = storage.fillLevels[fillType] or 0;
+            if fillLevel > 0 then
+                printdbg("Fillevel for %s is %d", fillTypeName, fillLevel);
+                local s = StorageFillLevel.new(fillType, fillLevel, storage);
+                storedFillTypes.insert(table.getn(storedFillTypes) + 1, s);
+            end;
+        end;
+    end;
+end;
+
 --- Get the fillTypeIndex for the fillType to use for this foodGroup
 -- @tparam any foodGroup The foodgroup we are filling
 -- @treturn integer fillTypeIndex we are going to use for this foodgroup.
-function AnimalHelper:getFillTypeIndexToFill(foodGroup) 
+function AnimalHelper:getFillTypeIndexToFill(foodGroup)
     local storedFillType = {
         fillTypeIndex = 0,
         amount = 0,
         storageId = nil
     };
-
-    local storedFillTypes = {};
-
-    for idx,fillType in pairs(foodGroup.fillTypes) do
-        printdbg("Checking Storages for available fillTypes:")
-        for stIdx, storage in ipairs(g_currentMission.storageSystem.storages) do
-            local fillLevelInStorage = storage.fillLevels[fillType];
-            printdbg("fillLevel for fillType %s is %d", fillType, fillLevelInStorage)
-        end
-    end
 
     -- @ToDo: Base chosen fillType on availability in storage, ie which fillType will be the cheapest.
     -- @Todo: Choose the cheapest
