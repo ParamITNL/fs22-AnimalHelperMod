@@ -307,24 +307,23 @@ function AnimalHelper:doFeed(clusterHusbandry, farmId)
     -- Take care of food:
     local animalTypeIndex = clusterHusbandry.animalSystem:getTypeIndexByName(clusterHusbandry.animalTypeName)
     local animalFood = g_currentMission.animalFoodSystem:getAnimalFood(animalTypeIndex)
-    local freeCapacity = nil
     local foodCosts = 0
 
     -- Fill Each FoodGroup
     for idx,foodGroup in pairs(animalFood.groups) do
         local fillAmountForFoodGroup = AnimalHelper:getFillAmountForFoodGroup(clusterHusbandry, foodGroup)
         if not AnimalHelper.buyProducts then
-            AnimalHelper:feedFromStorage(clusterHusbandry, foodGroup, fillAmountForFoodGroup)
+            printDbg("We are using what we have before buying")
+            fillAmountForFoodGroup = fillAmountForFoodGroup - AnimalHelper:feedFromStorage(clusterHusbandry, foodGroup, fillAmountForFoodGroup)
+            printDbg("Alright, that's done. We still need %d", fillAmountForFoodGroup)
         end
 
         local fillTypeIndex = AnimalHelper:getFillTypeIndexToFill(foodGroup)
-        freeCapacity = freeCapacity or clusterHusbandry.placeable:getFreeFoodCapacity(fillTypeIndex)
-
         -- Using EatWeight, so all groups getting emptied equally
-        local fillAmount = freeCapacity * foodGroup.eatWeight
         local pricePerLiter = g_currentMission.economyManager:getPricePerLiter(fillTypeIndex)
-        local priceForFood = fillAmount * pricePerLiter
+        local priceForFood = fillAmountForFoodGroup * pricePerLiter
 
+        printDbg("Now we are buying %d l of %s for %d", fillAmountForFoodGroup, g_fillTypeManager:getFillTypeNameByIndex(fillTypeIndex), pricePerLiter)
         clusterHusbandry.placeable:addFood(farmId, fillAmount, fillTypeIndex, nil)
 
         foodCosts = foodCosts + priceForFood
@@ -337,8 +336,17 @@ end
 function AnimalHelper:feedFromStorage(clusterHusbandry, foodGroup, fillAmountForFoodGroup)
     local farmId = g_currentMission:getFarmId()
     local fillAmount = fillAmountForFoodGroup
+    local amountFilled = 0
     -- loop through different possible foodTypes for foodGroup
-    for _,fillTypeIndex in pairs(foodGroup.fillTypes) do
+
+    --for _,fillTypeIndex in pairs(foodGroup.fillTypes) do
+    for _,fillTypeWithPrice in pairs(AnimalHelper:GetFoodGroupFillTypesSortedByPrice(foodGroup)) do
+        if amountFilled >= fillAmount then break end
+        local fillTypeIndex = fillTypeWithPrice.fillTypeIndex
+        local fillTypeName = g_fillTypeManager:getFillTypeNameByIndex(fillTypeIndex)
+        local pricePerLiter = fillTypeWithPrice.pricePerLiter
+
+        printDbg("Start searching for %s which should cost %.2f per liter", fillTypeName, pricePerLiter)
         for _,storage in pairs(g_currentMission.storageSystem:getStorages()) do
             if storage:getOwnerFarmId() == farmId and storage.foreignSilo ~= true and storage:getIsFillTypeSupported(fillTypeIndex) then
                 printDbg("Storage supports fillType")
@@ -354,11 +362,25 @@ function AnimalHelper:feedFromStorage(clusterHusbandry, foodGroup, fillAmountFor
                     -- Remove it from storage
                     printDbg("Remove food from storage")
                     local newFillLevel = fillLevel - whatCanWeFillFromStorage
+                    amountFilled = amountFilled + whatCanWeFillFromStorage
                     storage:setFillLevel(newFillLevel, fillTypeIndex, nil)
                 end
             end
         end
     end
+    return amountFilled
+end
+
+function AnimalHelper:GetFoodGroupFillTypesSortedByPrice(foodGroup)
+    local fillTypeWithPrice = {}
+    for _,fillTypeIndex in pairs(foodGroup.fillTypes) do
+        local pricePerLiter = g_currentMission.economyManager:getPricePerLiter(fillTypeIndex);
+        local x = { fillTypeIndex = fillTypeIndex, pricePerLiter = pricePerLiter}
+        table.insert(fillTypeWithPrice,x)
+    end
+
+    table.sort(fillTypeWithPrice, function(a, b) return a.pricePerLiter < b.pricePerLiter end)
+    return fillTypeWithPrice
 end
 
 function AnimalHelper:getFillAmountForFoodGroup(clusterHusbandry, foodGroup)
@@ -369,19 +391,12 @@ end
 -- @tparam any foodGroup The foodgroup we are filling
 -- @treturn integer fillTypeIndex we are going to use for this foodgroup.
 function AnimalHelper:getFillTypeIndexToFill(foodGroup)
-    local storedFillType = {
-        fillTypeIndex = 0,
-        amount = 0,
-        storageId = nil
-    };
-
-    -- @ToDo: Base chosen fillType on availability in storage, ie which fillType will be the cheapest.
-    -- @Todo: Choose the cheapest
-
-
-    -- 1. Available in storage
+    --ToDo: Search for the cheapest fillType
     -- 2. Cheapest to buy.
-    return foodGroup.fillTypes[1]
+    local fillTypesWithPrices = AnimalHelper:GetFoodGroupFillTypesSortedByPrice(foodGroup)
+    local fillTypeIndex = fillTypesWithPrices[1].fillTypeIndex
+    printDbg("The cheapest would be %s", g_fillTypeManager:getFillTypeNameByIndex(fillTypeIndex))
+    return fillTypesWithPrices[1].fillTypeIndex
 end;
 
 --- Helper method for horse-husbandries
