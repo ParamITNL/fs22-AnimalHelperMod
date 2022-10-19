@@ -1,22 +1,23 @@
-AnimalHelperSettingsDialog = {}
-local AnimalHelperSettingsDialog_mt = Class(AnimalHelperSettingsDialog, DialogElement)
-
-AnimalHelperSettingsDialog.CONTROLS = {
-    SAVE_BUTTON = "okButton",
-	BACK_BUTTON = "backButton",
-	START_HOUR = "helperStartHourElement",
-	FILL_STRAW = "animalHelperFillStraw",
-	IS_DEBUG = "animalHelperIsDebug"
+AnimalHelperSettingsDialog = {
+	CONTROLS = {
+		SAVE_BUTTON = "okButton",
+		BACK_BUTTON = "backButton",
+		START_HOUR = "helperStartHourElement",
+		FILL_STRAW = "animalHelperFillStraw",
+		IS_DEBUG = "animalHelperIsDebug"
+	},
+	workerStartHours = {},
+	workerStartHoursNum = {}
 }
+
+local AnimalHelperSettingsDialog_mt = Class(AnimalHelperSettingsDialog, DialogElement)
 
 function AnimalHelperSettingsDialog.new(target, customMt, l10n)
     local self = DialogElement.new(target, customMt or AnimalHelperSettingsDialog_mt)
 	self.l10n = l10n
-	self.workerStartHours = {}
-	self.workerStartHoursNum = {}
 	for i = 8, 23, 1 do
-		table.insert(self.workerStartHours, string.format("%02d:00", i))
-		table.insert(self.workerStartHoursNum, i)
+		table.insert(AnimalHelperSettingsDialog.workerStartHours, string.format("%02d:00", i))
+		table.insert(AnimalHelperSettingsDialog.workerStartHoursNum, i)
 	end
 
     self:registerControls(AnimalHelperSettingsDialog.CONTROLS)
@@ -28,29 +29,32 @@ function AnimalHelperSettingsDialog:onOpen()
 	AnimalHelperSettingsDialog:superClass().onOpen(self)
 	local workHour = 0
 
-	for i = 1, table.getn(self.workerStartHours) do
-		if string.format("%02d:00", AnimalHelper.startHour) == self.workerStartHours[i] then
+	print("setting current work hour:")
+	for i = 1, table.getn(AnimalHelperSettingsDialog.workerStartHours) do
+		if string.format("%02d:00", AnimalHelper.startHour) == AnimalHelperSettingsDialog.workerStartHours[i] then
+			print("Current work hour = " .. i);
 			workHour = i
 			break
 		end
 	end
 
-	self.helperStartHourElement:setState(workHour)
-	self.animalHelperFillStraw:setIsChecked(AnimalHelper.fillStraw)
-	self.animalHelperIsDebug:setIsChecked(AnimalHelper.isDebug)
+	AnimalHelperSettingsDialog.helperStartHourElement:setState(workHour)
+	AnimalHelperSettingsDialog.animalHelperFillStraw:setIsChecked(AnimalHelper.fillStraw)
+	AnimalHelperSettingsDialog.animalHelperIsDebug:setIsChecked(AnimalHelper.isDebug)
 end
 
 function AnimalHelperSettingsDialog:onCreateStartHour(element)
 	element:setTexts(self.workerStartHours)
 	element:setState(table.getn(self.workerStartHours))
+	FocusManager:setFocus(element);
 end
 
 function AnimalHelperSettingsDialog:onClickOk()
 	local _,_ = pcall(function()
-		printdbg("OK CLICKED")
+		printDbg("OK CLICKED")
 		local workerStartHour = self.helperStartHourElement:getState()
 
-		printdbg("Worker Start Hour '%s'", workerStartHour)
+		printDbg("Worker Start Hour '%s'", workerStartHour)
 		AnimalHelper.startHour = self.workerStartHoursNum[workerStartHour]
 
 		local isDebug = self.animalHelperIsDebug:getIsChecked()
@@ -62,6 +66,8 @@ function AnimalHelperSettingsDialog:onClickOk()
 		if fillStraw ~= nil then
 			AnimalHelper.fillStraw = fillStraw
 		end
+
+		AnimalHelper.saveSettings(AnimalHelper)
 	end)
 
     self:close()

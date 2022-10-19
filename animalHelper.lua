@@ -4,19 +4,17 @@
 -- @copyright © 2022, ParamIT
 -- @license MIT
 if (AnimalHelper ~= nil) then
-    printdbg("AnimalHelper already exists, unregistering...");
     removeModEventListener(AnimalHelper);
 end
-
-local directory = g_currentModDirectory
 
 AnimalHelper = {
     helpers = {
         ["HORSE"] = function(husbandry, farmId)
+            printDbg("running Horse Helper");
             return AnimalHelper:doForHorseHusbandry(husbandry, farmId);
         end,
         ["DEFAULT"] = function(husbandry, farmId)
-            printdbg("running default helper...");
+            printDbg("running default helper...");
             return AnimalHelper:doForHusbandry(husbandry, farmId);
         end
     },
@@ -24,7 +22,7 @@ AnimalHelper = {
     isDebug = true,
     fillStraw = true,
     modName = g_currentModName or "animalHelper",
-    modDir = directory,
+    modDir = g_currentModDirectory,
     startHour = 9
 }
 
@@ -33,8 +31,9 @@ AnimalHelper = {
 function AnimalHelper:loadMap(name)
     AnimalHelper:loadSettings()
     g_messageCenter:subscribe(MessageType.HOUR_CHANGED, self.hourChanged, self);
-    Player.registerActionEvents = Utils.appendedFunction(Player.registerActionEvents, self.registerActionEventsPlayer);
-    FSBaseMission.saveSavegame = Utils.appendedFunction(FSBaseMission.saveSavegame, self.saveSettings);
+
+    AnimalHelper:appendGameFunctions();
+    AnimalHelper:initConsoleCommands();
 
     local origTextElementLoadFromXml = TextElement.loadFromXML
     local origGuiElementLoadFromXml = GuiElement.loadFromXML
@@ -49,14 +48,14 @@ function AnimalHelper:loadMap(name)
         if id ~= "" and g_i18n:hasModText(id) and type(element.setText) == "function" then
             local text = g_i18n.modEnvironments[AnimalHelper.modName].texts[id]
             element:setText(text)
-            printdbg("Text for %s set to: %s", id, text)
+            printDbg("Text for %s set to: %s", id, text)
         elseif id ~= "" and not g_i18n:hasModText(id) then
             print("Warning: id '" .. id .. "' has no translations!")
         end
     end
 
     TextElement.loadFromXML = Utils.appendedFunction(origTextElementLoadFromXml, function(self, xmlFile, key)
-        printdbg("See if we can localize...")
+        printDbg("See if we can localize...")
         local _,_ pcall(loadElement, self, xmlFile, key)
     end)
     GuiElement.loadFromXML = Utils.appendedFunction(origGuiElementLoadFromXml, function(self, xmlFile, key)
@@ -64,8 +63,7 @@ function AnimalHelper:loadMap(name)
     end)
 
     local function loadAnimalHelperMenu()
-        -- g_gui:loadProfiles(Utils.getFilename("gui/guiProfiles.xml", self.vcaDirectory))
-        g_gui:loadProfiles(Utils.getFilename("gui/guiProfiles.xml", self.modDir))
+        g_gui:loadProfiles(Utils.getFilename("gui/guiProfiles.xml", AnimalHelper.modDir), AnimalHelperSettingsDialogAnimal);
         AnimalHelperSettingsDialog = AnimalHelperSettingsDialog.new()
         g_gui:loadGui(Utils.getFilename("gui/AnimalHelperSettingsDialog.xml", AnimalHelper.modDir), "AnimalHelperSettingsDialog", AnimalHelperSettingsDialog)
     end
@@ -80,6 +78,17 @@ function AnimalHelper:loadMap(name)
     TextElement.loadFromXML = origTextElementLoadFromXml
     GuiElement.loadFromXML = origGuiElementLoadFromXml
 end;
+
+---Appends the base game functions with own extensions
+function AnimalHelper:appendGameFunctions()
+    -- Append registerActionEvents with own actionRegistration
+    local origPlayerRegisterActionsEvents = Player.registerActionEvents;
+    Player.registerActionEvents = Utils.appendedFunction(origPlayerRegisterActionsEvents, self.registerActionEventsPlayer);
+
+    -- append SaveFunction, so we can save and load settings:
+    local origSaveSavegame = FSBaseMission.saveSavegame;
+    FSBaseMission.saveSavegame = Utils.appendedFunction(origSaveSavegame, self.saveSettings);
+end
 
 ---Get the filename for the settings xml file
 ---@return string filename The requested filename
@@ -128,7 +137,7 @@ end
 ---Extension on the Player.registerActionEvents function
 function AnimalHelper:registerActionEventsPlayer()
     -- @ToDo Change action text when helpers are enabled.
-    printdbg("Registering Actions!");
+    printDbg("Registering Actions!");
     local _, hireActionEventId, _ = g_inputBinding:registerActionEvent(InputAction.ANIMAL_HELPER_HIRE_HELPER, AnimalHelper, AnimalHelper.animalHelperHireCallback, false, true, false, true)
     g_inputBinding:setActionEventTextPriority(hireActionEventId, GS_PRIO_VERY_LOW);
     g_inputBinding:setActionEventTextVisibility(hireActionEventId, true);
@@ -139,13 +148,12 @@ function AnimalHelper:registerActionEventsPlayer()
 end
 
 function AnimalHelper:animalHelperOptionsCallback()
-        printdbg("Using the new UI...")
         g_gui:showDialog( "AnimalHelperSettingsDialog", true)
 end
 
 ---ANIMAL_HELPER_HIRE_HELPER action callback
 function AnimalHelper:animalHelperHireCallback()
-    printdbg("Hire Helper Action")
+    printDbg("Hire Helper Action")
     -- @ToDo: Add action to disable helper, or change text in help-menu
     AnimalHelper.enabled = AnimalHelper.enabled ~= true;
     local message
@@ -177,22 +185,37 @@ end
 -- Handles the hourChanged event. If the time is correct and helpers is enabled, the runHelpers method will be invoked.
 -- @see AnimalHelper:runHelpers
 function AnimalHelper:hourChanged()
-    printdbg("Checking if helper is enabled...");
-    printdbg("Is this loaded?");
+    printDbg("Checking if helper is enabled...");
+    printDbg("Is this loaded?");
     local isTime = g_currentMission.environment.currentHour == AnimalHelper.startHour or AnimalHelper.isDebug
     local isSleeping = g_sleepManager:getIsSleeping()
     if (AnimalHelper.enabled and isTime and not isSleeping) then
-        printdbg("Helpers enabled, trying to run them...");
+        printDbg("Helpers enabled, trying to run them...");
         AnimalHelper:runHelpers();
     else
-        printdbg("Helpers not enabled, skipping this time...");
+        printDbg("Helpers not enabled, skipping this time...");
     end
 end;
 
--- Add a consolecommand to manually run the helpers if AnimalHelper.isDebug is true:
-if(AnimalHelper.isDebug) then
-    removeConsoleCommand("ahRunHelpers");
-    addConsoleCommand("ahRunHelpers", "Hire animal helpers now", "runHelpers", AnimalHelper)
+function AnimalHelper:initConsoleCommands()
+    if (self.isDebug) then
+        local runHelperCmd = "ahRunHelpers";
+        local loadDialogsCmd = "ahReloadDialogs";
+
+        print("Adding debug commands");
+        removeConsoleCommand(runHelperCmd);
+        addConsoleCommand(runHelperCmd, "Hire animal helpers now", "runHelpers", self);
+
+        removeConsoleCommand(loadDialogsCmd);
+        addConsoleCommand(loadDialogsCmd, "Reload Dialogs", "loadDialogsCommand", self);
+    end
+end
+
+function AnimalHelper:loadDialogsCommand()
+    print("Exec loadDialogsCommand");
+    g_gui:loadProfiles(Utils.getFilename("gui/guiProfiles.xml", AnimalHelper.modDir or g_currentModDirectory), AnimalHelperSettingsDialogAnimal);
+    AnimalHelperSettingsDialog = AnimalHelperSettingsDialog.new()
+    g_gui:loadGui(Utils.getFilename("gui/AnimalHelperSettingsDialog.xml", AnimalHelper.modDir or g_currentModDirectory), "AnimalHelperSettingsDialog", AnimalHelperSettingsDialog)
 end
 
 --- Run the hired helpers for all husbandries.
@@ -226,7 +249,7 @@ end;
 --- @treturn integer The costs calculated for the daily upkeep of the animals
 function AnimalHelper:doForHusbandry(clusterHusbandry, farmId)
     local currentCosts = 0
-    printdbg("Default helper for husbandry " .. clusterHusbandry.animalTypeName);
+    printDbg("Default helper for husbandry " .. clusterHusbandry.animalTypeName);
 
     if (clusterHusbandry ~= nil) then
         currentCosts = currentCosts + AnimalHelper:doFeed(clusterHusbandry, farmId)
@@ -246,7 +269,7 @@ end;
 -- @treturn integer The costs calculated for the water. For now, water is free.
 function AnimalHelper:giveWater(clusterHusbandry, farmId)
     local freeCapacity = clusterHusbandry.placeable:getHusbandryFreeCapacity(FillType.WATER)
-    printdbg("Free capacity for water = %d l", freeCapacity)
+    printDbg("Free capacity for water = %d l", freeCapacity)
 
     if (freeCapacity ~= nil and freeCapacity > 0) then
         clusterHusbandry.placeable:addHusbandryFillLevelFromTool(farmId, freeCapacity, FillType.WATER, nil)
@@ -267,7 +290,7 @@ function AnimalHelper:giveStraw(clusterHusbandry, farmId)
     local pricePerLiter = g_currentMission.economyManager:getPricePerLiter(FillType.STRAW)
     local applied = clusterHusbandry.placeable:addHusbandryFillLevelFromTool(farmId, freeCapacity, FillType.STRAW, nil)
     strawCosts = applied * pricePerLiter
-    printdbg("%d l of straw added for € %d (%d / lt)", applied, strawCosts, pricePerLiter)
+    printDbg("%d l of straw added for € %d (%d / lt)", applied, strawCosts, pricePerLiter)
 
     return strawCosts
 end
@@ -299,10 +322,10 @@ function AnimalHelper:doFeed(clusterHusbandry, farmId)
 
         clusterHusbandry.placeable:addFood(farmId, fillAmount, fillTypeIndex, nil)
 
-        printdbg(string.format("Costs for %s  (of %s) liter of fillType '%s' are %s", fillAmount, freeCapacity, fillTypeIndex, priceForFood))
+        printDbg(string.format("Costs for %s  (of %s) liter of fillType '%s' are %s", fillAmount, freeCapacity, fillTypeIndex, priceForFood))
         foodCosts = foodCosts + priceForFood
 
-        printdbg(string.format("FoodGroup %s done.", idx))
+        printDbg(string.format("FoodGroup %s done.", idx))
     end
 
     return foodCosts
@@ -313,11 +336,11 @@ function AnimalHelper:getFoodAvailableInStorages(foodGroup)
 
     for _,fillType in pairs(foodGroup.fillTypes) do
         local fillTypeName = g_fillTypeManager:getFillTypeNameByIndex(fillType);
-        printdbg("Checking storages for fillType: %s", fillTypeName);
+        printDbg("Checking storages for fillType: %s", fillTypeName);
         for _,storage in pairs(g_currentMission.storageSystem:getStorages()) do
             local fillLevel = storage.fillLevels[fillType] or 0;
             if fillLevel > 0 then
-                printdbg("Fillevel for %s is %d", fillTypeName, fillLevel);
+                printDbg("Fillevel for %s is %d", fillTypeName, fillLevel);
                 local s = StorageFillLevel.new(fillType, fillLevel, storage);
                 storedFillTypes.insert(table.getn(storedFillTypes) + 1, s);
             end;
@@ -371,8 +394,10 @@ addModEventListener(AnimalHelper);
 --- Method that prints (formatted) text only when AnimalHelper.isDebug is true.
 -- @tparam string str inputstring
 -- @tparam any ... string format arguments
-function printdbg(str, ...)
+function printDbg(str, ...)
     if (AnimalHelper.isDebug == true) then
         print(string.format(str, ...))
     end
 end
+
+print("Loaded AnimalHelperUI successfully");
