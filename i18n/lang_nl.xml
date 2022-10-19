@@ -9,5 +9,7 @@
         <text name="ANIMAL_HELPER_FILL_STRAW_TOOLTIP" text="Bepaalt of de verzorgers het stro bijvullen in de dierenverblijven" />
         <text name="ANIMAL_HELPER_IS_DEBUG_TEXT" text="Ontwikkelaars modus" />
         <text name="ANIMAL_HELPER_IS_DEBUG_TOOLTIP" text="Deze mod schrijft meer berichten in de log en de verzorgers draaien elk uur als deze instelling AAN staat." />
+        <text name="ANIMAL_HELPER_ALWAYS_BUY_FOOD" text="Benodigdheden kopen" />
+        <text name="ANIMAL_HELPER_ALWAYS_BUY_FOOD_TOOLTIP" text="Bepaalt of benodigdheden gekocht worden of, indien mogelijk, uit lokale opslag gehaald wordt." />
     </texts>
 </l10n>

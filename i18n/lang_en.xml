@@ -9,5 +9,7 @@
         <text name="ANIMAL_HELPER_FILL_STRAW_TOOLTIP" text="Determines if the helpers will topup straw in pastures and stables" />
         <text name="ANIMAL_HELPER_IS_DEBUG_TEXT" text="Debug Mode" />
         <text name="ANIMAL_HELPER_IS_DEBUG_TOOLTIP" text="When ON, this mod will print more messages and the Helper will run every Hour" />
+        <text name="ANIMAL_HELPER_ALWAYS_BUY_FOOD" text="Buy products" />
+        <text name="ANIMAL_HELPER_ALWAYS_BUY_FOOD_TOOLTIP" text="Determines if required products are bought or, if possible, taken from local storages." />
     </texts>
 </l10n>

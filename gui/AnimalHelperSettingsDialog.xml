@@ -12,7 +12,7 @@
 			<GuiElement type="text" profile="ingameMenuFrameHeaderText" text="Animal Helper"/>
 		</GuiElement>
 
-        <!-- Scorlling Layout settings box -->
+        <!-- Scrolling Layout settings box -->
         <GuiElement type="bitmap" profile="mainMenuSettingsBox" id="settingsContainer">
             <GuiElement type="bitmap" profile="topScrollClipper" name="topClipper" />
             <GuiElement type="bitmap" profile="bottomScrollClipper" name="bottomClipper" />
@@ -45,6 +45,15 @@
                     <GuiElement type="text"   profile="multiTextOptionSettingsTitle" text="Debug Mode" i18nId="ANIMAL_HELPER_IS_DEBUG_TEXT" />
                     <GuiElement type="bitmap" profile="multiTextOptionSettingsBg" />
                     <GuiElement type="text"   profile="multiTextOptionSettingsTooltip" i18nId="ANIMAL_HELPER_IS_DEBUG_TOOLTIP" text="startHourTooltip"/>
+                </GuiElement>
+
+                <GuiElement type="checkedOption" profile="multiTextOptionSettings" id="animalHelperAlwaysBuyFood">
+                    <GuiElement type="button" profile="multiTextOptionSettingsLeft" />
+                    <GuiElement type="button" profile="multiTextOptionSettingsRight"/>
+                    <GuiElement type="text"   profile="multiTextOptionSettingsText" />
+                    <GuiElement type="text"   profile="multiTextOptionSettingsTitle" text="Always buy food" i18nId="ANIMAL_HELPER_ALWAYS_BUY_FOOD" />
+                    <GuiElement type="bitmap" profile="multiTextOptionSettingsBg" />
+                    <GuiElement type="text"   profile="multiTextOptionSettingsTooltip" i18nId="ANIMAL_HELPER_ALWAYS_BUY_FOOD_TOOLTIP" text="alwaysBuyFoodToolTip"/>
                 </GuiElement>
             </GuiElement>
 

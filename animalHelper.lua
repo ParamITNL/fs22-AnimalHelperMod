@@ -10,11 +10,9 @@ end
 AnimalHelper = {
     helpers = {
         ["HORSE"] = function(husbandry, farmId)
-            printDbg("running Horse Helper");
             return AnimalHelper:doForHorseHusbandry(husbandry, farmId);
         end,
         ["DEFAULT"] = function(husbandry, farmId)
-            printDbg("running default helper...");
             return AnimalHelper:doForHusbandry(husbandry, farmId);
         end
     },
@@ -23,7 +21,8 @@ AnimalHelper = {
     fillStraw = true,
     modName = g_currentModName or "animalHelper",
     modDir = g_currentModDirectory,
-    startHour = 9
+    startHour = 9,
+    buyProducts = false,
 }
 
 ---loadMap EventHandler
@@ -48,14 +47,12 @@ function AnimalHelper:loadMap(name)
         if id ~= "" and g_i18n:hasModText(id) and type(element.setText) == "function" then
             local text = g_i18n.modEnvironments[AnimalHelper.modName].texts[id]
             element:setText(text)
-            printDbg("Text for %s set to: %s", id, text)
         elseif id ~= "" and not g_i18n:hasModText(id) then
             print("Warning: id '" .. id .. "' has no translations!")
         end
     end
 
     TextElement.loadFromXML = Utils.appendedFunction(origTextElementLoadFromXml, function(self, xmlFile, key)
-        printDbg("See if we can localize...")
         local _,_ pcall(loadElement, self, xmlFile, key)
     end)
     GuiElement.loadFromXML = Utils.appendedFunction(origGuiElementLoadFromXml, function(self, xmlFile, key)
@@ -71,8 +68,6 @@ function AnimalHelper:loadMap(name)
     local state, result = pcall( loadAnimalHelperMenu )
     if not ( state ) then
         print("Error: Error loading AnimalHelper UI: "..tostring(result))
-    else
-        print("Loaded AnimalHelperUI successfully")
     end
 
     TextElement.loadFromXML = origTextElementLoadFromXml
@@ -87,7 +82,6 @@ function AnimalHelper:appendGameFunctions()
 
     -- append SaveFunction, so we can save and load settings:
     local origSaveSavegame = FSBaseMission.saveSavegame;
-    FSBaseMission.saveSavegame = Utils.appendedFunction(origSaveSavegame, self.saveSettings);
 end
 
 ---Get the filename for the settings xml file
@@ -99,9 +93,19 @@ local function getSaveFileName()
             getUserProfileAppPath(),
             g_currentMission.missionInfo.savegameIndex)
 	end;
+    if not fileExists(string.format(xmlFilePath.."/careerSavegame.xml")) then
+        AnimalHelper:saveSavegame()
+    end
     xmlFilePath = string.format("%s/%s.xml", xmlFilePath, "animalHelper")
 
     return xmlFilePath
+end
+
+function AnimalHelper:saveSavegame()
+    local mission = g_currentMission
+    if mission ~= nil then
+        mission.savegameController:saveSavegame(mission.missionInfo)
+    end
 end
 
 ---Load the settings from animalHelper.xml
@@ -116,28 +120,28 @@ function AnimalHelper:loadSettings()
             AnimalHelper.isDebug = xmlFile:getBool(key..".isDebug", false)
             AnimalHelper.fillStraw = xmlFile:getBool(key..".fillStraw", AnimalHelper.fillStraw)
             AnimalHelper.startHour = xmlFile:getInt(key .. ".startHour", AnimalHelper.startHour)
+            AnimalHelper.buyProducts = xmlFile:getBool(key .. ".buyProducts", AnimalHelper.buyProducts)
         end
     end
 end
 
 --- Save the current settings when saving the game.
 function AnimalHelper:saveSettings()
-    print("Saving AnimalHelper settings")
     local xmlFilePath = getSaveFileName()
     local key = AnimalHelper.modName
     local xmlFile = XMLFile.create(key, xmlFilePath, key)
     xmlFile:setBool(key..".isEnabled", AnimalHelper.enabled)
     xmlFile:setBool(key..".isDebug", AnimalHelper.isDebug)
     xmlFile:setBool(key..".fillStraw", AnimalHelper.fillStraw)
-    xmlFile:setInt(key .. ".startHour", AnimalHelper.startHour)
+    xmlFile:setInt(key..".startHour", AnimalHelper.startHour)
+    xmlFile:setBool(key..".buyProducts", AnimalHelper.buyProducts)
     xmlFile:save();
-	xmlFile:delete();
+    xmlFile:delete();
 end
 
 ---Extension on the Player.registerActionEvents function
 function AnimalHelper:registerActionEventsPlayer()
     -- @ToDo Change action text when helpers are enabled.
-    printDbg("Registering Actions!");
     local _, hireActionEventId, _ = g_inputBinding:registerActionEvent(InputAction.ANIMAL_HELPER_HIRE_HELPER, AnimalHelper, AnimalHelper.animalHelperHireCallback, false, true, false, true)
     g_inputBinding:setActionEventTextPriority(hireActionEventId, GS_PRIO_VERY_LOW);
     g_inputBinding:setActionEventTextVisibility(hireActionEventId, true);
@@ -153,8 +157,6 @@ end
 
 ---ANIMAL_HELPER_HIRE_HELPER action callback
 function AnimalHelper:animalHelperHireCallback()
-    printDbg("Hire Helper Action")
-    -- @ToDo: Add action to disable helper, or change text in help-menu
     AnimalHelper.enabled = AnimalHelper.enabled ~= true;
     local message
     if (AnimalHelper.enabled) then
@@ -185,12 +187,9 @@ end
 -- Handles the hourChanged event. If the time is correct and helpers is enabled, the runHelpers method will be invoked.
 -- @see AnimalHelper:runHelpers
 function AnimalHelper:hourChanged()
-    printDbg("Checking if helper is enabled...");
-    printDbg("Is this loaded?");
     local isTime = g_currentMission.environment.currentHour == AnimalHelper.startHour or AnimalHelper.isDebug
     local isSleeping = g_sleepManager:getIsSleeping()
     if (AnimalHelper.enabled and isTime and not isSleeping) then
-        printDbg("Helpers enabled, trying to run them...");
         AnimalHelper:runHelpers();
     else
         printDbg("Helpers not enabled, skipping this time...");
@@ -202,20 +201,12 @@ function AnimalHelper:initConsoleCommands()
         local runHelperCmd = "ahRunHelpers";
         local loadDialogsCmd = "ahReloadDialogs";
 
-        print("Adding debug commands");
         removeConsoleCommand(runHelperCmd);
         addConsoleCommand(runHelperCmd, "Hire animal helpers now", "runHelpers", self);
 
         removeConsoleCommand(loadDialogsCmd);
         addConsoleCommand(loadDialogsCmd, "Reload Dialogs", "loadDialogsCommand", self);
     end
-end
-
-function AnimalHelper:loadDialogsCommand()
-    print("Exec loadDialogsCommand");
-    g_gui:loadProfiles(Utils.getFilename("gui/guiProfiles.xml", AnimalHelper.modDir or g_currentModDirectory), AnimalHelperSettingsDialogAnimal);
-    AnimalHelperSettingsDialog = AnimalHelperSettingsDialog.new()
-    g_gui:loadGui(Utils.getFilename("gui/AnimalHelperSettingsDialog.xml", AnimalHelper.modDir or g_currentModDirectory), "AnimalHelperSettingsDialog", AnimalHelperSettingsDialog)
 end
 
 --- Run the hired helpers for all husbandries.
@@ -249,8 +240,6 @@ end;
 --- @treturn integer The costs calculated for the daily upkeep of the animals
 function AnimalHelper:doForHusbandry(clusterHusbandry, farmId)
     local currentCosts = 0
-    printDbg("Default helper for husbandry " .. clusterHusbandry.animalTypeName);
-
     if (clusterHusbandry ~= nil) then
         currentCosts = currentCosts + AnimalHelper:doFeed(clusterHusbandry, farmId)
         currentCosts = currentCosts + AnimalHelper:giveWater(clusterHusbandry, farmId)

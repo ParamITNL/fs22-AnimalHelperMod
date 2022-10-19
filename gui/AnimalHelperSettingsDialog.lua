@@ -4,7 +4,8 @@ AnimalHelperSettingsDialog = {
 		BACK_BUTTON = "backButton",
 		START_HOUR = "helperStartHourElement",
 		FILL_STRAW = "animalHelperFillStraw",
-		IS_DEBUG = "animalHelperIsDebug"
+		IS_DEBUG = "animalHelperIsDebug",
+		BUY_PRODUCTS = "animalHelperAlwaysBuyFood"
 	},
 	workerStartHours = {},
 	workerStartHoursNum = {}
@@ -27,20 +28,19 @@ end
 
 function AnimalHelperSettingsDialog:onOpen()
 	AnimalHelperSettingsDialog:superClass().onOpen(self)
-	local workHour = 0
+	local workHour = 1
 
-	print("setting current work hour:")
 	for i = 1, table.getn(AnimalHelperSettingsDialog.workerStartHours) do
-		if string.format("%02d:00", AnimalHelper.startHour) == AnimalHelperSettingsDialog.workerStartHours[i] then
-			print("Current work hour = " .. i);
-			workHour = i
-			break
+		if (AnimalHelper.startHour == AnimalHelperSettingsDialog.workerStartHoursNum[i]) then
+			workHour = i;
+			break;
 		end
 	end
 
 	AnimalHelperSettingsDialog.helperStartHourElement:setState(workHour)
 	AnimalHelperSettingsDialog.animalHelperFillStraw:setIsChecked(AnimalHelper.fillStraw)
 	AnimalHelperSettingsDialog.animalHelperIsDebug:setIsChecked(AnimalHelper.isDebug)
+	AnimalHelperSettingsDialog.animalHelperAlwaysBuyFood:setIsChecked(AnimalHelper.buyProducts or true);
 end
 
 function AnimalHelperSettingsDialog:onCreateStartHour(element)
@@ -51,10 +51,7 @@ end
 
 function AnimalHelperSettingsDialog:onClickOk()
 	local _,_ = pcall(function()
-		printDbg("OK CLICKED")
 		local workerStartHour = self.helperStartHourElement:getState()
-
-		printDbg("Worker Start Hour '%s'", workerStartHour)
 		AnimalHelper.startHour = self.workerStartHoursNum[workerStartHour]
 
 		local isDebug = self.animalHelperIsDebug:getIsChecked()
@@ -67,7 +64,11 @@ function AnimalHelperSettingsDialog:onClickOk()
 			AnimalHelper.fillStraw = fillStraw
 		end
 
-		AnimalHelper.saveSettings(AnimalHelper)
+		local buyProductsEnabled = self.animalHelperAlwaysBuyFood:getIsChecked()
+		if buyProductsEnabled ~= nul then
+			AnimalHelper.buyProducts = buyProductsEnabled
+		end
+		AnimalHelper:saveSettings()
 	end)
 
     self:close()

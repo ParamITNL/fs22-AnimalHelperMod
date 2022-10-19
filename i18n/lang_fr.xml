@@ -4,11 +4,13 @@
     <translationContributors>ParamIT</translationContributors>
     <texts>
         <text name="ANIMAL_HELPER_SUBTITLE" text="Configuration" />
-        <text name="ANIMAL_HELPER_START_HOUR" text="Animal Helper start time" />
-        <text name="ANIMAL_HELPER_START_HOUR_TOOLTIP" text="The helpers will run at this time. Note: The helpers won't run when you are resting" />
-        <text name="ANIMAL_HELPER_FILL_STRAW_TEXT" text="Fill straw in pastures and stables" />
-        <text name="ANIMAL_HELPER_FILL_STRAW_TOOLTIP" text="Determines if the helpers will topup straw in pastures and stables" />
+        <text name="ANIMAL_HELPER_START_HOUR" text="Heure de début de l'aide aux animaux" />
+        <text name="ANIMAL_HELPER_START_HOUR_TOOLTIP" text="Les assistants courront à ce moment-là. Remarque : les assistants ne courent pas lorsque vous vous reposez" />
+        <text name="ANIMAL_HELPER_FILL_STRAW_TEXT" text="Remplir de paille les pâturages et les étables" />
+        <text name="ANIMAL_HELPER_FILL_STRAW_TOOLTIP" text="Détermine si les aides rempliront de paille dans les pâturages et les étables" />
         <text name="ANIMAL_HELPER_IS_DEBUG_TEXT" text="Debug Mode" />
-        <text name="ANIMAL_HELPER_IS_DEBUG_TOOLTIP" text="When ON, this mod will print more messages and the Helper will run every Hour" />
+        <text name="ANIMAL_HELPER_IS_DEBUG_TOOLTIP" text="Lorsqu'il est activé, ce mod imprimera plus de messages et l'assistant s'exécutera toutes les heures" />
+        <text name="ANIMAL_HELPER_ALWAYS_BUY_FOOD" text="Acheter des produits" />
+        <text name="ANIMAL_HELPER_ALWAYS_BUY_FOOD_TOOLTIP" text="Détermine si les produits requis sont achetés ou, si possible, prélevés dans des entrepôts locaux." />
     </texts>
 </l10n>
