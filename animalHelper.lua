@@ -28,6 +28,7 @@ AnimalHelper = {
 ---loadMap EventHandler
 ---@param name string
 function AnimalHelper:loadMap(name)
+    printDbg("Loading animalHelper into map %s", name)
     AnimalHelper:loadSettings()
     g_messageCenter:subscribe(MessageType.HOUR_CHANGED, self.hourChanged, self);
 
