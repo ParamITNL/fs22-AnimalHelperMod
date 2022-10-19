@@ -85,6 +85,7 @@ function AnimalHelper:appendGameFunctions()
 
     -- append SaveFunction, so we can save and load settings:
     local origSaveSavegame = FSBaseMission.saveSavegame;
+    FSBaseMission.saveSavegame = Utils.appendedFunction(origSaveSavegame, self.saveSettings)
 end
 
 ---Get the filename for the settings xml file
