@@ -1,10 +1,8 @@
-StorageFillLevel = {
+StorageFillLevelInfo = {}
+local StorageFillLevelInfo_mt = Class(StorageFillLevelInfo)
 
-};
-local ah_StorageFillLevel = Class(ah_StorageFillLevel);
-
-function StorageFillLevel.new(fillType, fillLevel, storage)
-    local self = setmetatable({}, ah_StorageFillLevel)
+function StorageFillLevelInfo.new(fillType, fillLevel, storage)
+    local self = setmetatable({}, StorageFillLevelInfo_mt)
     self.fillType = fillType
     self.fillLevel = fillLevel
     self.storage = storage

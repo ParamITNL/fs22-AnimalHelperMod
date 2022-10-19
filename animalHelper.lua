@@ -312,12 +312,9 @@ function AnimalHelper:doFeed(clusterHusbandry, farmId)
 
     -- Fill Each FoodGroup
     for idx,foodGroup in pairs(animalFood.groups) do
-        -- Get fillLevels available in storage for foodgroup:
+        local fillAmountForFoodGroup = AnimalHelper:getFillAmountForFoodGroup(clusterHusbandry, foodGroup)
         if not AnimalHelper.buyProducts then
-            printDbg("We're not buying it! Check storage!")
-            local foodInStorages = AnimalHelper:getFoodAvailableInStorages(foodGroup)
-
-            -- We'll first try to fill from the storage(s)
+            AnimalHelper:feedFromStorage(clusterHusbandry, foodGroup, fillAmountForFoodGroup)
         end
 
         local fillTypeIndex = AnimalHelper:getFillTypeIndexToFill(foodGroup)
@@ -330,60 +327,42 @@ function AnimalHelper:doFeed(clusterHusbandry, farmId)
 
         clusterHusbandry.placeable:addFood(farmId, fillAmount, fillTypeIndex, nil)
 
-        printDbg(string.format("Costs for %s  (of %s) liter of fillType '%s' are %s", fillAmount, freeCapacity, fillTypeIndex, priceForFood))
         foodCosts = foodCosts + priceForFood
-
         printDbg(string.format("FoodGroup %s done.", idx))
     end
 
     return foodCosts
 end
 
-function AnimalHelper:getFoodAvailableInStorages(foodGroup)
-    local storedFillTypes = {}
-
-    for _,fillTypeIndex in pairs(foodGroup.fillTypes) do
-        local fillTypeName = g_fillTypeManager:getFillTypeNameByIndex(fillTypeIndex)
-        printDbg("Checking storages for fillType '%s'", fillTypeName)
-        local storageFillLevel = AnimalHelper:getFillLevelFromStorages(fillTypeIndex)
-    end
-    --for _,fillType in pairs(foodGroup.fillTypes) do
-    --    local fillTypeName = g_fillTypeManager:getFillTypeNameByIndex(fillType)
-    --
-    --    printDbg("Checking storages for fillType: %s", fillTypeName);
-    --    for _,storage in pairs(g_currentMission.storageSystem:getStorages()) do
-
-    --        if storage:getOwnerFarmId() == farmId and storage.foreignSilo ~= true and storage:getIsFillTypeSupported(fillType.index) then
-    --            local fillLevel = storage.fillLevels[fillType] or 0;
-    --            printDbg("Found fillLevel %d in storage '%s'", fillLevel, type(storage))
-    --
-    --            if fillLevel > 0 then
-    --                local storageFillLevel = StorageFillLevel.new(fillType, fillLevel, storage)
-    --                storageFillLevel:printInfo() --@todo: remove after debug phase
-    --                storedFillTypes.insert(table.getn(storedFillTypes) + 1, storageFillLevel)
-    --            end
-    --        end
-    --    end
-    --end
-
-    return storedFillTypes;
-end
-
-function AnimalHelper:getFillLevelFromStorages(fillTypeIndex)
+function AnimalHelper:feedFromStorage(clusterHusbandry, foodGroup, fillAmountForFoodGroup)
     local farmId = g_currentMission:getFarmId()
-    local storages = {}
-    for _,storage in pairs(g_currentMission.storageSystem:getStorages()) do
-        if storage:getOwnerFarmId() == farmId and storage.foreignSilo ~= true and storage:getIsFillTypeSupported(fillTypeIndex) then
-            local fillLevel = storage:getFillLevel(fillTypeIndex) or 0
-            printDbg("Storage %d supports fillTypeIndex '%s' and has fillLevel %d", storage.id, fillTypeIndex, fillLevel)
-            if storages[fillTypeIndex] ~= nil then
-                table.insert(storages[fillTypeIndex], storage)
-            else
-                storages[fillTypeIndex] = {}
-                table.insert(storages[fillTypeIndex], storage)
+    local fillAmount = fillAmountForFoodGroup
+    -- loop through different possible foodTypes for foodGroup
+    for _,fillTypeIndex in pairs(foodGroup.fillTypes) do
+        for _,storage in pairs(g_currentMission.storageSystem:getStorages()) do
+            if storage:getOwnerFarmId() == farmId and storage.foreignSilo ~= true and storage:getIsFillTypeSupported(fillTypeIndex) then
+                printDbg("Storage supports fillType")
+                local fillLevel = storage:getFillLevel(fillTypeIndex)
+                if fillLevel > 0 then
+                    printDbg("And it has actually food in it!")
+                    local whatCanWeFillFromStorage = math.min(fillLevel, fillAmount)
+
+                    -- Add food to husbandry
+                    printDbg("Add food to husbandry")
+                    clusterHusbandry.placeable:addFood(farmId, whatCanWeFillFromStorage, fillTypeIndex, nil)
+
+                    -- Remove it from storage
+                    printDbg("Remove food from storage")
+                    local newFillLevel = fillLevel - whatCanWeFillFromStorage
+                    storage:setFillLevel(newFillLevel, fillTypeIndex, nil)
+                end
             end
         end
     end
+end
+
+function AnimalHelper:getFillAmountForFoodGroup(clusterHusbandry, foodGroup)
+    return clusterHusbandry.placeable:getFreeFoodCapacity(foodGroup.fillTypes[1]) * foodGroup.eatWeight
 end
 
 --- Get the fillTypeIndex for the fillType to use for this foodGroup
