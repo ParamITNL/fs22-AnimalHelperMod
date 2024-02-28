@@ -11,7 +11,7 @@ This mod uses the games economy to calculate prices for the food and straw used.
 The FS19 version can be found in the FS19 branch. This version is no longer maintained.
 
 ## Installation Guide (Windows)
-1. Open a Windows Terminal (Windows Key + X and Shift + A)
+1. Open a Windows Terminal or PowerShell (Windows Key + X and Shift + A)
 2. Clone this repository: `git clone https://github.com/ParamITNL/fs22-AnimalHelperMod.git`
 3. Change the working directory to the repository and open the windows explorer there: `cd fs22-AnimalHelperMod`, `explorer .`
 4. Move the `build.ps1` script out of the "buildScripts" directory into the root folder of the repository.
